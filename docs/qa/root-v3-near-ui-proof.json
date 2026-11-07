@@ -1,0 +1,28 @@
+{
+  "network": "testnet",
+  "localSession": "author-full-v3",
+  "registryId": "3",
+  "confirmedOwner": "buyer.sanctuary-market-mvvmipf5.testnet",
+  "links": [
+    {
+      "label": "sanctuary-market-mvvmipf5.testnet ↗",
+      "url": "https://testnet.nearblocks.io/address/sanctuary-market-mvvmipf5.testnet"
+    },
+    {
+      "label": "buyer.sanctuary-market-mvvmipf5.testnet ↗",
+      "url": "https://testnet.nearblocks.io/address/buyer.sanctuary-market-mvvmipf5.testnet"
+    },
+    {
+      "label": "list_dragon · 12QGzMqV15BT… ↗",
+      "url": "https://testnet.nearblocks.io/txns/12QGzMqV15BTaguQCxkUnPPudBfusynLNGGETu8fU2pN"
+    },
+    {
+      "label": "buy_dragon · 9LCrCKRrTxhB… ↗",
+      "url": "https://testnet.nearblocks.io/txns/9LCrCKRrTxhB6V21v723Aq9rBLZomeM71NzycsYX42ZR"
+    },
+    {
+      "label": "withdraw · 3Wt1e5citUxd… ↗",
+      "url": "https://testnet.nearblocks.io/txns/3Wt1e5citUxdZqVbtah3upiuVubDDw6Vb2A87UC7Ex43"
+    }
+  ]
+}

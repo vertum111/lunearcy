@@ -1,0 +1,89 @@
+{
+  "network": "testnet",
+  "status": "deployed-and-trade-verified",
+  "rpc": "https://test.rpc.fastnear.com",
+  "customRegistry": true,
+  "nep171": false,
+  "transactions": [
+    {
+      "label": "create_buyer",
+      "hash": "AsHNPs99xKtcRboYHJSkdsTHd48Cr8Vd1wFjzsotva7T",
+      "explorer": "https://testnet.nearblocks.io/txns/AsHNPs99xKtcRboYHJSkdsTHd48Cr8Vd1wFjzsotva7T"
+    },
+    {
+      "label": "deploy",
+      "hash": "D1CHfGE3vtwTfhq2v8vEkiFsB7XHctEQBH6WgFcGTeUJ",
+      "explorer": "https://testnet.nearblocks.io/txns/D1CHfGE3vtwTfhq2v8vEkiFsB7XHctEQBH6WgFcGTeUJ"
+    },
+    {
+      "label": "new",
+      "hash": "Ek5ro79Hn46FP1qhQjXPso8kW48fcY9yKGEPjnEzX39z",
+      "explorer": "https://testnet.nearblocks.io/txns/Ek5ro79Hn46FP1qhQjXPso8kW48fcY9yKGEPjnEzX39z"
+    },
+    {
+      "label": "register_account",
+      "hash": "7q2s9x6HpDjUZ3coLNa4pqPJU9v8o4xR5fvz88P3JBbW",
+      "explorer": "https://testnet.nearblocks.io/txns/7q2s9x6HpDjUZ3coLNa4pqPJU9v8o4xR5fvz88P3JBbW"
+    },
+    {
+      "label": "register_account",
+      "hash": "HdeQeTUBBYMuVHsDwZWxJNWiJZ6EczYVs1m2uo9Evzh7",
+      "explorer": "https://testnet.nearblocks.io/txns/HdeQeTUBBYMuVHsDwZWxJNWiJZ6EczYVs1m2uo9Evzh7"
+    },
+    {
+      "label": "register_dragon",
+      "hash": "HP99YLNrMQgLfNJCDNdeiWbgSSiX4WmdAiNyLyRut4zE",
+      "explorer": "https://testnet.nearblocks.io/txns/HP99YLNrMQgLfNJCDNdeiWbgSSiX4WmdAiNyLyRut4zE"
+    },
+    {
+      "label": "list_dragon",
+      "hash": "5R1VcG5va3in4RxPkGrVqX6ZX3tbXbBrpKAVT2sPR3GB",
+      "explorer": "https://testnet.nearblocks.io/txns/5R1VcG5va3in4RxPkGrVqX6ZX3tbXbBrpKAVT2sPR3GB"
+    },
+    {
+      "label": "buy_dragon",
+      "hash": "iaR8k3W8qCbnnTekEZZoeiSZTVSEUCoVJoRmDXEVnDK",
+      "explorer": "https://testnet.nearblocks.io/txns/iaR8k3W8qCbnnTekEZZoeiSZTVSEUCoVJoRmDXEVnDK"
+    },
+    {
+      "label": "withdraw",
+      "hash": "23fhRmrNGqFBKLdxDQYavkCruQEKGDvgw18NcEdnX58x",
+      "explorer": "https://testnet.nearblocks.io/txns/23fhRmrNGqFBKLdxDQYavkCruQEKGDvgw18NcEdnX58x"
+    }
+  ],
+  "checks": {
+    "ownerTransferred": true,
+    "listingCleared": true,
+    "sellerCredited": true,
+    "withdrawalSettled": true
+  },
+  "contractId": "sanctuary-market-mvvmipf5.testnet",
+  "sellerId": "sanctuary-market-mvvmipf5.testnet",
+  "buyerId": "buyer.sanctuary-market-mvvmipf5.testnet",
+  "wasmSha256": "3ea01f0652dc2ab76e95793f241eaa645b4e3eae0a61023df2ae09c143af022a",
+  "wasmBytes": 278708,
+  "config": {
+    "standard": "CUSTOM_REGISTRY_NOT_NEP171",
+    "network": "testnet",
+    "account_storage": "10000000000000000000000",
+    "dragon_storage": "20000000000000000000000",
+    "max_dragons": "256",
+    "max_owned": 8,
+    "registered_dragons": "0",
+    "registered_accounts": 0
+  },
+  "finalDragon": {
+    "id": "1",
+    "owner_id": "buyer.sanctuary-market-mvvmipf5.testnet",
+    "species": "moss",
+    "name": "Листочок",
+    "snapshot_hash": "fbf9e63087c49962f61b809f194da91baf5a070d845cb740cc895bbefa246c10",
+    "price": null
+  },
+  "finalSeller": {
+    "credit": "0",
+    "owned": 0,
+    "pending_withdrawal": "0"
+  },
+  "updatedAt": "2026-10-30T23:49:45.836Z"
+}

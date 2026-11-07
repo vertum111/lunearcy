@@ -1,0 +1,57 @@
+
+> hatchglen@0.3.0 test
+> node --test tests/*.test.js
+
+✔ new states have separate mutable inventory and dragons (0.883417ms)
+✔ hatching observes the boundary, cannot be repeated, and feeding consumes exactly six berries (1.029333ms)
+✔ production pays only for completed cycles and collection cannot be repeated (0.285375ms)
+✔ long offline period caps production storage at five cycles (0.181958ms)
+✔ failed multi-resource spending is atomic and never makes coins negative (1.712625ms)
+✔ egg prices, uniqueness and capacity reject purchases without charging (1.020583ms)
+✔ all NPC orders are finite and payouts match the exact merchant budget (0.792334ms)
+✔ insufficient merchant budget or goods rejects trade without partial debit (0.249ms)
+✔ automatic phases alternate at exact boundaries and demo override expires (0.232709ms)
+✔ expeditions require eclipse, an adult and food; no overlapping trips (0.494834ms)
+✔ trip stops new production, survives world transition, and reward can be claimed only once (0.287125ms)
+✔ crafting consumes both resources and snapshots the reward at expedition departure (0.162334ms)
+✔ JSON reload preserves timers, production, finite orders and expedition reward exactly (0.209333ms)
+✔ tick is idempotent and cannot move its stored clock backwards (0.104875ms)
+✔ foraging is free, time gated and recovers the starter-food hardlock (0.147958ms)
+✔ berry egg purchase consumes exact quoted food price and validates payment (0.061ms)
+✔ travel blocks both collecting stored yield and upgrading away dragons (0.121417ms)
+✔ team validation rejects duplicate, unknown, baby or empty teams before charging (0.350375ms)
+✔ delving requires arrival, charges both ingredients once and extends return timer (0.250417ms)
+✔ returning at first arrival is a valid alternative to delving (0.093833ms)
+✔ restoration rejects missing milestones and expansion is gated behind it (0.401625ms)
+✔ legacy migration preserves progress and adds new defaults without inventing wealth (0.674375ms)
+✔ fresh player completes the chapter using only legal earned resources and natural phases (1.722292ms)
+ℹ Earned-resource progression finished in 246 simulated seconds
+✔ individual names are bounded plain text and resetting does not rename the species (6.194542ms)
+✔ coin purchases transfer budget, berry barter does not print coins (0.199ms)
+✔ closed orders cannot refresh without budget; purchasing funds exactly affordable new requests (0.802ms)
+✔ refresh keeps pending requests and reserves their entire liability first (1.679ms)
+✔ location unlock requirements and costs are atomic, slots remain distinct up to eight (1.130916ms)
+✔ a locked map or insufficient resources cannot consume an unlock (1.122583ms)
+✔ moving settles old habitat production and applies only future specialist bonuses (0.292083ms)
+✔ upgrades do not retroactively multiply already stored harvest (0.331958ms)
+✔ location upgrade bonus is species-specific and respects the offline cycle cap (0.388375ms)
+✔ slot-specific egg purchase rejects occupied or locked nests without charging (0.476167ms)
+✔ v2 saves migrate slots, names, offline stock and legacy earned charms without a reset (0.958041ms)
+✔ v3 validation rejects damaged IDs, slots, unsafe names, balances and expedition teams (0.698333ms)
+✔ second chapter has a resource sink and cannot be completed twice (0.441834ms)
+✔ ruins unlock cannot bypass paying for the quarry second nest (0.110959ms)
+✔ two chapters are reachable with earned resources, natural phases and funded orders only (8.748667ms)
+ℹ First chapter 185s; second chapter 516s; 22 trades, merchant budget 138, state {"locations":{"grove":{"unlocked":true,"level":1},"quarry":{"unlocked":true,"level":1},"ruins":{"unlocked":true,"level":1}},"slots":7,"adults":6,"crafted":3,"expeditions":6,"level":3,"resources":{"coins":276,"berries":18,"embers":2,"ore":1,"relics":26}}
+✔ expedition preview matches departure snapshot at level3/4/5 and caps advanced contribution at three (3.165042ms)
+✔ collecting midway through production preserves the next scheduled harvest (3.07ms)
+✔ restoration cannot be counted again after a reload (5.514208ms)
+✔ a beginner who spends starting coins on food recovers chapter one through barter after reload (12.1465ms)
+ℹ Food mistake recovered at 305s with 5 natural-phase expeditions.
+ℹ tests 42
+ℹ suites 0
+ℹ pass 42
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 175.162084

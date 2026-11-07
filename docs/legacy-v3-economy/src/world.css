@@ -1,0 +1,1119 @@
+/* All world styling is namespaced. The economic UI owns the containing layout. */
+.sanctuary-world {
+  position:relative;
+  width:100%;
+  height:100%;
+  min-height:260px;
+  overflow:hidden;
+  isolation:isolate;
+  touch-action:none;
+  user-select:none;
+  -webkit-user-select:none;
+  cursor:grab;
+  background:#163c41;
+  border-radius:inherit;
+  outline-offset:-4px;
+  --sw-light:#c5dc92;
+  --sw-fog:#295859;
+  --sw-ink:#173e3c;
+  --sw-caption:#e3edd2;
+  --sw-moss:#92b75d;
+  --sw-camera-scale:.6
+}
+.sanctuary-world:focus-visible {
+  outline:2px solid #d8e8a7
+}
+.sanctuary-world button {
+  font:inherit;
+  color:inherit;
+  cursor:pointer;
+  touch-action:none;
+  -webkit-tap-highlight-color:transparent
+}
+.sanctuary-world button:focus-visible {
+  outline:3px solid #eff5cf;
+  outline-offset:7px
+}
+.sw-sky {
+  position:absolute;
+  inset:0;
+  background:radial-gradient(ellipse at 56% 25%,#3e7c73 0,#245653 38%,#163c41 76%);
+  z-index:-1;
+  transition:background 1.8s
+}
+.sw-stage {
+  position:absolute;
+  left:0;
+  top:0;
+  width:2200px;
+  height:1500px;
+  transform-origin:0 0;
+  will-change:transform;
+  contain:layout style;
+  transition:filter 1.8s
+}
+.sw-scenery {
+  position:absolute;
+  inset:0;
+  overflow:visible;
+  pointer-events:none
+}
+.sw-node-layer {
+  position:absolute;
+  inset:0;
+  pointer-events:none
+}
+.sw-node-layer button {
+  pointer-events:auto
+}
+.sw-world-vignette {
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:linear-gradient(0deg,#15383c8c,transparent 13%,transparent 88%,#15383c4d),linear-gradient(90deg,#15383c50,transparent 12%,transparent 88%,#15383c50);
+  z-index:2
+}
+.sw-nest,.sw-location {
+  position:absolute;
+  border:0;
+  background:none;
+  display:flex;
+  align-items:center;
+  flex-direction:column;
+  justify-content:flex-end;
+  padding:0;
+  transform:translate(-50%,-100%);
+  transform-origin:50% 100%;
+  text-align:center;
+  color:var(--sw-caption);
+  transition:opacity .3s,filter .3s;
+  overflow:visible
+}
+.sw-nest {
+  width:250px;
+  height:260px
+}
+.sanctuary-world .sw-nest:active,.sanctuary-world .sw-location:active {
+  transform:translate(-50%,-100%)
+}
+.sw-pad-shadow {
+  position:absolute;
+  left:24px;
+  right:24px;
+  height:45px;
+  bottom:-13px;
+  border-radius:50%;
+  background:radial-gradient(ellipse,#1d413b55,transparent 70%);
+  pointer-events:none
+}
+.sw-nest-ring {
+  position:absolute;
+  left:24px;
+  right:24px;
+  height:57px;
+  bottom:-6px;
+  border:2px solid #c2d28d50;
+  border-radius:50%;
+  background:radial-gradient(ellipse,#b8c98516,transparent 68%);
+  pointer-events:none
+}
+.sw-nest-ring:after {
+  content:'';
+  position:absolute;
+  inset:6px;
+  border:1px solid #d3e1ab30;
+  border-radius:50%
+}
+.sw-nest.sw-selected .sw-nest-ring {
+  border-color:#e4f0b1;
+  box-shadow:0 0 0 4px #d8ed9f1a,0 0 25px #d0ed8e2e
+}
+.sw-nest.sw-selected .sw-nest-caption {
+  color:#faf7db;
+  border-color:#d0e6ad85;
+  background:#234f43ee
+}
+.sw-creature {
+  position:absolute;
+  left:5px;
+  right:5px;
+  bottom:8px;
+  height:235px;
+  display:block;
+  transform-origin:50% 95%;
+  pointer-events:none;
+  filter:drop-shadow(0 5px 2px #183c3520)
+}
+.sw-creature .dragon-sprite,.sw-creature img,.sw-creature>svg {
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:contain
+}
+.sw-creature .dragon-sprite {
+  background-repeat:no-repeat
+}
+.sw-creature-baby {
+  left:43px;
+  right:43px;
+  height:155px;
+  bottom:13px
+}
+.sw-creature-egg {
+  left:70px;
+  right:70px;
+  height:135px;
+  bottom:7px;
+  transform-origin:50% 93%;
+  animation:sw-egg-rock 6s infinite ease-in-out
+}
+.sw-creature-egg .egg-art {
+  width:100%;
+  height:100%
+}
+.sw-nest:not(.sw-away):not(.sw-offscreen) .sw-creature-adult {
+  animation:sw-breathe 7s ease-in-out infinite
+}
+.sw-nest-caption,.sw-location-label {
+  position:absolute;
+  left:50%;
+  top:calc(100% + 8px);
+  transform:translateX(-50%);
+  border:1px solid #87aaa061;
+  background:#1c4540e8;
+  border-radius:10px;
+  padding:9px 13px;
+  min-width:140px;
+  max-width:230px;
+  pointer-events:none;
+  white-space:nowrap;
+  box-shadow:0 5px 14px #102e3330
+}
+.sw-nest-caption strong,.sw-location-label strong {
+  display:block;
+  font-family:ui-sans-serif,system-ui,sans-serif;
+  line-height:1.25;
+  font-weight:650;
+  font-size:15px;
+  letter-spacing:.1px
+}
+.sw-nest-caption small,.sw-location-label small {
+  display:block;
+  font-family:ui-sans-serif,system-ui,sans-serif;
+  font-size:11px;
+  line-height:1.3;
+  color:#b5d0b9;
+  margin-top:4px;
+  font-variant-numeric:tabular-nums
+}
+.sw-nest:hover .sw-nest-caption,.sw-location:hover .sw-location-label {
+  border-color:#c8dd9e;
+  background:#2d5b48
+}
+.sw-harvest {
+  position:absolute;
+  left:50%;
+  top:15px;
+  transform:translateX(-50%);
+  background:#d5e7a9;
+  color:#28483a;
+  display:flex;
+  gap:5px;
+  align-items:center;
+  padding:8px 14px;
+  border-radius:25px;
+  font-size:19px;
+  font-family:ui-sans-serif,system-ui,sans-serif;
+  font-weight:750;
+  white-space:nowrap;
+  box-shadow:0 4px 10px #102e333b;
+  border:1px solid #f0efc2;
+  pointer-events:none
+}
+.sw-harvest-ready:not(.sw-offscreen) .sw-harvest {
+  animation:sw-ready-bob 4s ease-in-out infinite
+}
+.sw-work-particle {
+  position:absolute;
+  left:65%;
+  bottom:20px;
+  color:#cedb99;
+  opacity:0;
+  pointer-events:none
+}
+.sw-nest:not(.sw-away):not(.sw-offscreen):not(.sw-harvest-ready) .sw-work-particle-a {
+  animation:sw-work 6s 1s infinite ease-out
+}
+.sw-nest:not(.sw-away):not(.sw-offscreen):not(.sw-harvest-ready) .sw-work-particle-b {
+  left:35%;
+  animation:sw-work 7s 3s infinite ease-out
+}
+.sw-away .sw-creature {
+  opacity:.33;
+  filter:saturate(.4)
+}
+.sw-away .sw-nest-caption small {
+  color:#bcb5da
+}
+.sw-empty,.sw-locked {
+  height:110px
+}
+.sw-empty-art,.sw-lock-art {
+  display:grid;
+  place-items:center;
+  position:absolute;
+  left:50%;
+  bottom:17px;
+  transform:translateX(-50%);
+  width:64px;
+  height:45px;
+  border:1px dashed #d7e6b06b;
+  border-radius:50%;
+  color:#d9e7b7;
+  background:#3a6a4c66
+}
+.sw-lock-art {
+  border:0;
+  background:none;
+  color:#b5cbb7;
+  opacity:.8
+}
+.sw-empty .sw-nest-caption,.sw-locked .sw-nest-caption {
+  min-width:135px;
+  padding:7px 10px;
+  opacity:.85
+}
+.sw-locked .sw-nest-caption {
+  background:#234d4ad9;
+  border-style:dashed
+}
+.sw-locked .sw-nest-caption strong {
+  font-size:12px
+}
+.sw-locked .sw-nest-caption small {
+  font-size:10px
+}
+.sw-empty .sw-nest-ring {
+  border-style:dashed;
+  border-color:#c2d28d69
+}
+.sw-locked .sw-nest-ring {
+  border:1px dashed #95b2a144;
+  background:#9cbbb51a
+}
+.sw-location {
+  width:180px;
+  height:175px
+}
+.sw-location-art {
+  display:block;
+  width:165px;
+  height:155px;
+  pointer-events:none;
+  transform-origin:50% 100%
+}
+.sw-location-art>svg {
+  display:block;
+  width:100%;
+  height:100%;
+  overflow:visible
+}
+.sw-location-label {
+  min-width:145px;
+  top:calc(100% + 2px);
+  padding:7px 11px;
+  border-radius:8px
+}
+.sw-location-label strong {
+  font-size:12px;
+  letter-spacing:.1px
+}
+.sw-location-label small {
+  font-size:10px;
+  margin-top:3px
+}
+.sw-location-market {
+  width:210px;
+  height:180px
+}
+.sw-location-shrine {
+  width:190px;
+  height:200px
+}
+.sw-location-shrine .sw-location-art {
+  width:180px;
+  height:190px
+}
+.sw-location-ruins .sw-location-art {
+  width:185px;
+  height:180px
+}
+.sw-location-forage {
+  height:150px
+}
+.sw-location-grove {
+  height:190px
+}
+.sw-location-quarry {
+  height:190px
+}
+.sw-location-active .sw-location-label {
+  border-color:#c8dd9e;
+  color:#eff1d2
+}
+.sw-location-locked .sw-location-art {
+  filter:saturate(.5);
+  opacity:.6
+}
+.sw-location-locked .sw-location-label {
+  border-style:dashed;
+  background:#244746ee
+}
+.sw-location-locked .sw-location-label small {
+  color:#c2cbbf
+}
+.sw-location-ready .sw-location-label small {
+  color:#e0e9ae
+}
+.sw-location-ready .sw-location-label {
+  border-color:#c4d69577
+}
+.sw-location:not(.sw-offscreen):not(.sw-location-locked) .sw-furnace-glow {
+  animation:sw-ember 4s infinite ease-in-out
+}
+.sw-heart-crystal {
+  opacity:.45;
+  transition:opacity 1s,filter 1s
+}
+.sw-restored .sw-heart-crystal {
+  opacity:1;
+  filter:drop-shadow(0 0 8px #b9e5bc)
+}
+.sw-restored .sw-location-shrine:not(.sw-offscreen) .sw-heart-crystal {
+  animation:sw-crystal 5s infinite ease-in-out
+}
+.sw-ruin-portal {
+  opacity:.45;
+  transition:fill 1.8s,opacity 1.8s
+}
+.sw-eclipse .sw-ruin-portal {
+  fill:#bd7599;
+  opacity:.9
+}
+.sw-zone-fog {
+  position:absolute;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity 1.5s;
+  z-index:1200;
+  background:radial-gradient(ellipse,#91b8ad6b 0%,#729e9f43 32%,#497b8124 52%,transparent 70%);
+  filter:blur(20px)
+}
+.sw-quarry-fog {
+  left:40px;
+  top:500px;
+  width:650px;
+  height:850px
+}
+.sw-ruins-fog {
+  left:1370px;
+  top:300px;
+  width:730px;
+  height:1030px
+}
+.sw-quarry-locked .sw-quarry-fog,.sw-ruins-locked .sw-ruins-fog {
+  opacity:1
+}
+.sw-offscreen {
+  visibility:hidden;
+  pointer-events:none!important;
+  animation-play-state:paused!important
+}
+.sw-offscreen * {
+  animation-play-state:paused!important
+}
+.sw-dragging,.sw-dragging button {
+  cursor:grabbing!important
+}
+.sw-dragging .sw-nest,.sw-dragging .sw-location {
+  pointer-events:none
+}
+.sw-camera-controls {
+  position:absolute;
+  right:16px;
+  bottom:18px;
+  display:flex;
+  gap:3px;
+  padding:5px;
+  z-index:5;
+  background:#173b3de6;
+  border:1px solid #79aaa76b;
+  border-radius:12px;
+  box-shadow:0 5px 20px #122f3540
+}
+.sw-camera-controls button {
+  width:38px;
+  height:38px;
+  display:grid;
+  place-items:center;
+  background:#2e5b53;
+  border:0;
+  border-radius:7px;
+  color:#d1e5c7;
+  font-family:ui-sans-serif,system-ui,sans-serif;
+  font-size:24px;
+  line-height:1;
+  transition:background .2s
+}
+.sw-camera-controls button:hover {
+  background:#47765f
+}
+.sw-camera-controls button:focus-visible {
+  outline-offset:1px
+}
+.sw-camera-controls button svg {
+  width:18px;
+  height:18px
+}
+.sw-camera-hint {
+  position:absolute;
+  bottom:21px;
+  left:50%;
+  transform:translateX(-50%);
+  font-family:ui-sans-serif,system-ui,sans-serif;
+  color:#d0e1c3;
+  font-size:10px;
+  letter-spacing:.3px;
+  padding:8px 12px;
+  border:1px solid #8eb49d29;
+  border-radius:20px;
+  background:#234c4377;
+  pointer-events:none;
+  transition:opacity .3s;
+  z-index:3;
+  white-space:nowrap
+}
+.sw-camera-used .sw-camera-hint {
+  opacity:0
+}
+.sw-map-caption {
+  position:absolute;
+  left:18px;
+  bottom:24px;
+  color:#b9d3bd;
+  font:10px ui-sans-serif,system-ui,sans-serif;
+  letter-spacing:.4px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  z-index:3;
+  pointer-events:none
+}
+.sw-map-caption>span {
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  background:#c9df97;
+  box-shadow:0 0 7px #a8d48c66
+}
+.sw-eclipse {
+  --sw-light:#d6a6bc;
+  --sw-caption:#e3e4d4
+}
+.sw-eclipse .sw-sky {
+  background:radial-gradient(ellipse at 56% 25%,#704557,#3d384d 40%,#233a46 76%)
+}
+.sw-eclipse .sw-stage {
+  filter:saturate(.77) hue-rotate(319deg) brightness(.82)
+}
+.sw-eclipse .sw-nest-caption,.sw-eclipse .sw-location-label {
+  background:#293d44ed;
+  border-color:#a49ba078
+}
+.sw-eclipse .sw-selected .sw-nest-ring {
+  border-color:#e3b9cf;
+  box-shadow:0 0 0 4px #e5aec21a,0 0 25px #c984a72e
+}
+.sw-eclipse .sw-zone-fog {
+  background:radial-gradient(ellipse,#a996b46b 0%,#8f849e43 32%,#756a9124 52%,transparent 70%)
+}
+.sw-reduced-motion * {
+  animation:none!important;
+  transition:none!important
+}
+@keyframes sw-breathe {
+  0%,100% {
+    transform:scale(1,1)
+  }
+  50% {
+    transform:scale(1.006,1.022)
+  }
+}
+@keyframes sw-egg-rock {
+  0%,83%,100% {
+    transform:rotate(0)
+  }
+  87% {
+    transform:rotate(-3deg)
+  }
+  91% {
+    transform:rotate(3deg)
+  }
+  95% {
+    transform:rotate(-1deg)
+  }
+}
+@keyframes sw-ready-bob {
+  0%,100% {
+    translate:0 0
+  }
+  50% {
+    translate:0 -5px
+  }
+}
+@keyframes sw-work {
+  0%,65% {
+    opacity:0;
+    transform:translate(0,0) scale(.7)
+  }
+  75% {
+    opacity:.7
+  }
+  100% {
+    opacity:0;
+    transform:translate(7px,-48px) scale(.3)
+  }
+}
+@keyframes sw-ember {
+  0%,100% {
+    opacity:.6
+  }
+  50% {
+    opacity:1
+  }
+}
+@keyframes sw-crystal {
+  0%,100% {
+    transform:translateY(0)
+  }
+  50% {
+    transform:translateY(-4px)
+  }
+}
+@media(max-width:760px) {
+  .sw-camera-controls {
+    right:10px;
+    bottom:12px;
+    padding:4px;
+    gap:3px;
+    border-radius:10px
+  }
+  .sw-camera-controls button {
+    width:36px;
+    height:36px
+  }
+  .sw-camera-hint {
+    bottom:15px;
+    left:12px;
+    transform:none;
+    font-size:8px;
+    background:#204b43ba;
+    max-width:170px
+  }
+  .sw-map-caption {
+    display:none
+  }
+  .sw-nest-caption {
+    padding:10px 14px
+  }
+  .sw-nest-caption strong {
+    font-size:17px
+  }
+  .sw-nest-caption small {
+    font-size:13px
+  }
+  .sw-location-label strong {
+    font-size:14px
+  }
+  .sw-location-label small {
+    font-size:12px
+  }
+  .sw-location-label {
+    padding:9px 12px;
+    min-width:155px
+  }
+  .sw-harvest {
+    font-size:21px
+  }
+  .sanctuary-world {
+    min-height:320px
+  }
+}
+@media(prefers-reduced-motion:reduce) {
+  .sanctuary-world * {
+    animation:none!important;
+    transition:none!important
+  }
+}
+/* Keep labels legible as the map zooms out;
+these are map annotations, not terrain. */
+.sw-nest-caption,.sw-location-label {
+  transform:translateX(-50%) scale(clamp(.75,calc(.75 / var(--sw-camera-scale)),3));
+  transform-origin:50% 0
+}
+.sw-harvest {
+  transform:translateX(-50%) scale(clamp(.8,calc(.7 / var(--sw-camera-scale)),2.8));
+  transform-origin:50% 50%
+}
+.sw-empty,.sw-locked {
+  height:200px
+}
+.sw-location {
+  min-width:220px;
+  min-height:200px
+}
+.sw-feedback-particles {
+  position: absolute;
+  left: 50%;
+  bottom: 45px;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+  color: #e7edb2;
+  z-index: 5;
+}
+.sw-feedback-particles i {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  animation: sw-reward-burst .85s var(--sw-pdelay) ease-out both;
+}
+.sw-feedback-particles-feed { color: #c9e187; }
+.sw-feedback-particles-claim, .sw-feedback-particles-restore { color: #dfc6e4; }
+.sw-feedback-particles-upgrade { color: #efe1a2; }
+.sw-feedback-collect .sw-nest-ring,
+.sw-feedback-feed .sw-nest-ring,
+.sw-feedback-hatch .sw-nest-ring,
+.sw-feedback-upgrade .sw-nest-ring,
+.sw-feedback-claim .sw-nest-ring {
+  animation: sw-pad-pulse .8s ease-out both;
+}
+.sw-feedback-hatch .sw-creature { animation: sw-hatch-arrive .65s ease-out both !important; }
+@keyframes sw-reward-burst {
+  0% { transform: translate(0, 0) scale(.3); opacity: 0; }
+  15% { opacity: .95; }
+  100% { transform: translate(var(--sw-px), var(--sw-py)) scale(.5); opacity: 0; }
+}
+@keyframes sw-pad-pulse {
+  0% { box-shadow: 0 0 0 0 #d0eab250; border-color: #f1f5c9; }
+  100% { box-shadow: 0 0 0 35px #d0eab200; border-color: #c2d28d50; }
+}
+@keyframes sw-feed-nod { 0%, 100% { transform: rotate(0); } 45% { transform: rotate(9deg); } }
+@keyframes sw-hatch-arrive { 0% { opacity: 0; transform: scale(.7) translateY(10px); } 65% { opacity: 1; transform: scale(1.04) translateY(-3px); } 100% { opacity: 1; transform: none; } }
+@keyframes sw-upgrade-wing { 0%, 100% { transform: rotate(0); } 45% { transform: rotate(-12deg); } }
+/* Paint-aware hit regions keep transparent wings/large button boxes from stealing station clicks. */
+.sw-node-layer .sw-nest, .sw-node-layer .sw-location { pointer-events: none; }
+.sw-nest .sw-nest-ring, .sw-nest .sw-empty-art, .sw-nest .sw-lock-art,
+.sw-nest .sw-nest-caption, .sw-nest .sw-harvest,
+.sw-location .sw-location-art, .sw-location .sw-location-label { pointer-events: auto; }
+.sw-creature svg, .sw-creature svg * { pointer-events: visiblePainted; }
+.sw-location-grove::before, .sw-location-quarry::before, .sw-location-ruins::before { pointer-events: auto; }
+.sw-dragging .sw-nest *, .sw-dragging .sw-location * { pointer-events: none !important; }
+.reduced-motion .sanctuary-world * { animation: none !important; transition: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  .sanctuary-world .sw-creature, .sanctuary-world .sw-nest-ring,
+  .sanctuary-world .sw-feedback-particles i, .sanctuary-world .dragon-svg * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ---- Painted valley (v4). One illustrated plate per phase; live creatures and props sit on top. ---- */
+.sanctuary-world{background:#0f2a30}
+.sw-stage{width:3168px;height:1344px;filter:none!important}
+.sw-valley{position:absolute;inset:0;pointer-events:none}
+.sw-valley-art{position:absolute;inset:0;width:100%;height:100%;display:block;user-select:none}
+.sw-valley-eclipse{opacity:0;transition:opacity 2.2s ease}
+.sw-eclipse .sw-valley-eclipse{opacity:1}
+.sw-world-vignette{background:radial-gradient(ellipse 75% 70% at 50% 48%,transparent 55%,#0b222880 100%);transition:background 2s}
+.sw-eclipse .sw-world-vignette{background:radial-gradient(ellipse 75% 70% at 50% 48%,transparent 50%,#26080f99 100%)}
+.sw-eclipse .sw-sky{background:#210b12}
+
+/* Ambient life painted over the plate */
+.sw-firefly{position:absolute;width:7px;height:7px;margin:-3px;border-radius:50%;background:#f4f1a0;box-shadow:0 0 10px 3px #e6ef8a88;opacity:0;animation:sw-firefly var(--sw-ff-dur,8s) ease-in-out var(--sw-ff-delay,0s) infinite;transition:background 2s,box-shadow 2s}
+.sw-eclipse .sw-firefly{background:#ff7466;box-shadow:0 0 12px 4px #ff3f3f88}
+.sw-brazier-glow{position:absolute;left:2262px;top:372px;width:190px;height:150px;margin:-75px -95px;border-radius:50%;background:radial-gradient(closest-side,#ffb45a66,#ff7b2a22 55%,transparent);mix-blend-mode:screen;animation:sw-flicker 2.4s ease-in-out infinite}
+.sw-crystal-glow{position:absolute;width:220px;height:200px;margin:-100px -110px;border-radius:50%;background:radial-gradient(closest-side,#9fe9ff44,transparent);mix-blend-mode:screen;animation:sw-ember 5s ease-in-out infinite}
+.sw-crystal-glow-a{left:140px;top:470px}.sw-crystal-glow-b{left:190px;top:900px;animation-delay:-2s}
+@keyframes sw-firefly{0%,100%{opacity:0;transform:translate(0,0)}20%{opacity:.95}50%{opacity:.5;transform:translate(26px,-34px)}80%{opacity:.9;transform:translate(-14px,-58px)}}
+@keyframes sw-flicker{0%,100%{opacity:.75;transform:scale(1)}30%{opacity:1;transform:scale(1.06)}60%{opacity:.82;transform:scale(.97)}}
+
+/* Locked regions: the plate stays visible but is veiled in mist */
+.sw-zone-fog{filter:none;background:none;-webkit-backdrop-filter:saturate(.25) brightness(.55) blur(3px);backdrop-filter:saturate(.25) brightness(.55) blur(3px);z-index:1200}
+.sw-zone-fog:after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,#b9d6d03a,#5f8f9426 45%,transparent 75%)}
+.sw-quarry-fog{left:0;top:0;width:820px;height:1344px;-webkit-mask-image:linear-gradient(90deg,#000 78%,transparent);mask-image:linear-gradient(90deg,#000 78%,transparent)}
+.sw-ruins-fog{left:2290px;top:0;width:878px;height:1344px;-webkit-mask-image:linear-gradient(270deg,#000 80%,transparent);mask-image:linear-gradient(270deg,#000 80%,transparent)}
+.sw-eclipse .sw-zone-fog{background:none}
+.sw-eclipse .sw-zone-fog:after{background:radial-gradient(ellipse at 50% 45%,#d26a7a2e,#5a1f3326 45%,transparent 75%)}
+
+/* Creatures at concept scale: an adult spans roughly a fifth of the framed grove */
+.sw-nest{width:340px;height:300px}
+.sw-creature{left:0;right:0;bottom:0;height:300px;filter:drop-shadow(0 10px 6px #0b231f40)}
+.sw-creature-baby{left:80px;right:80px;height:170px;bottom:4px}
+.sw-creature-egg{left:118px;right:118px;height:126px;bottom:10px;filter:drop-shadow(0 0 18px #fff6d040) drop-shadow(0 8px 5px #0b231f45)}
+.sw-eclipse .sw-creature{filter:drop-shadow(0 0 2px #ff6a5a55) drop-shadow(0 10px 6px #1a050a55) brightness(.95) saturate(1.1)}
+.sw-pad-shadow{left:70px;right:70px;bottom:-14px;height:46px;background:radial-gradient(ellipse,#0e2a2066,transparent 70%)}
+.sw-nest-ring{left:90px;right:90px;height:52px;bottom:-12px;border:2px solid transparent;background:none;transition:border-color .25s,box-shadow .25s}
+.sw-nest-ring:after{display:none}
+.sw-nest.sw-selected .sw-nest-ring{border-color:#9ff0dccc;box-shadow:0 0 0 5px #9ff0dc22,0 0 30px #9ff0dc55}
+.sw-eclipse .sw-selected .sw-nest-ring{border-color:#ffb3a6cc;box-shadow:0 0 0 5px #ff8f8022,0 0 30px #ff6f6f55}
+.sw-nest:hover .sw-nest-ring{border-color:#d9f5e180}
+
+/* Captions stay out of the painting until they matter */
+.sw-nest-caption,.sw-location-label{top:calc(100% + 14px);min-width:0;padding:6px 12px;border-radius:999px;background:#0f2e31e6;border:1px solid #7fd3c455;box-shadow:0 6px 18px #0a1f2440;opacity:0;translate:0 -4px;transition:opacity .2s,translate .2s;font-family:inherit}
+.sw-nest-caption strong,.sw-location-label strong{font-family:inherit;font-size:15px;font-weight:800}
+.sw-nest-caption small,.sw-location-label small{font-family:inherit;font-size:12px;margin-top:1px;color:#a9d8cb}
+.sanctuary-world .sw-nest .sw-nest-caption,.sanctuary-world .sw-location .sw-location-label{opacity:0;visibility:visible}
+.sanctuary-world .sw-nest:hover .sw-nest-caption,.sanctuary-world .sw-nest:focus-visible .sw-nest-caption,.sanctuary-world .sw-nest.sw-selected .sw-nest-caption,.sanctuary-world .sw-egg .sw-nest-caption,.sanctuary-world .sw-baby .sw-nest-caption,
+.sanctuary-world .sw-location:hover .sw-location-label,.sanctuary-world .sw-location:focus-visible .sw-location-label,.sanctuary-world .sw-location-ready .sw-location-label{opacity:1;translate:0 0}
+.sanctuary-world .sw-nest-caption small,.sanctuary-world .sw-location-label small{display:block}
+.sw-eclipse .sw-nest-caption,.sw-eclipse .sw-location-label{background:#2a0f17e6;border-color:#ff8f8055}
+.sw-eclipse .sw-nest-caption small,.sw-eclipse .sw-location-label small{color:#f1b9b0}
+.sw-harvest{top:-6px;padding:7px 14px;font-family:inherit;font-weight:900;background:#effae0;color:#1e4a3c;border:2px solid #9ff0dc;box-shadow:0 6px 16px #0a201f55}
+.sw-eclipse .sw-harvest{border-color:#ffb3a6}
+
+/* Empty and locked nests: a soft ring on the moss, not a UI box */
+.sw-empty .sw-nest-ring{border:2px dashed #e7f6c7aa;background:radial-gradient(ellipse,#e7f6c722,transparent 70%)}
+.sw-empty-art,.sw-lock-art{position:absolute;left:50%;bottom:18px;translate:-50% 0;width:52px;height:52px;display:grid;place-items:center;border-radius:50%;background:#103033cc;border:2px solid #9ff0dc99;color:#dff7ec;box-shadow:0 6px 16px #08191c55}
+.sw-lock-art{border-color:#ffffff40;color:#c5d4cf;background:#14262acc}
+.sw-locked .sw-nest-ring{border:2px dashed #ffffff30}
+
+/* Painted locations: a small floating marker over the painted feature */
+.sw-location-plate{width:120px;height:110px}
+.sw-location-plate .sw-location-art{position:absolute;left:50%;bottom:0;translate:-50% 0;width:auto;height:auto}
+.sw-marker{width:50px;height:50px;display:grid;place-items:center;border-radius:50%;background:#103033d9;border:2px solid #9ff0dcaa;color:#e6fbef;box-shadow:0 8px 18px #08191c66,0 0 0 6px #9ff0dc14;transition:transform .2s,background .2s}
+.sw-location-plate:hover .sw-marker{transform:translateY(-3px);background:#1d4b49}
+.sw-location-ready .sw-marker{background:#e8f7cf;color:#22493a;border-color:#fff;animation:sw-ready-bob 3s ease-in-out infinite}
+.sw-location-locked .sw-marker{border-color:#ffffff40;color:#b8c8c4}
+.sw-eclipse .sw-marker{background:#2a0f17d9;border-color:#ff9f8faa;color:#ffe5dc;box-shadow:0 8px 18px #14030866,0 0 0 6px #ff6f6f1a}
+.sw-location-workshop .sw-marker{color:#ffcf8a}
+.sw-location-plate{min-width:0;min-height:0}
+.sw-location-market,.sw-location-shrine{min-width:0;min-height:0;width:220px;height:200px}
+.sw-location-market .sw-location-art,.sw-location-shrine .sw-location-art{width:210px;height:190px}
+.sw-sky{background:#0f2a30}
+.sw-camera-controls,.sw-camera-hint,.sw-map-caption{display:none}
+.sanctuary-world .sw-nest.tutorial-focus{outline:0!important;box-shadow:none!important}
+.sw-nest.tutorial-focus .sw-nest-ring{border:3px solid #eff9b6;box-shadow:0 0 28px #d3ef9d77}
+.sw-nest.tutorial-focus .sw-nest-caption{opacity:1;translate:0 0}
+/* Illustrated cut-out props (market, shrine) */
+.sw-location-market,.sw-location-shrine{width:240px;height:250px}
+.sw-location-market .sw-location-art,.sw-location-shrine .sw-location-art{width:230px;height:240px}
+.sw-prop{display:block;width:100%;height:100%;object-fit:contain;object-position:50% 100%;filter:drop-shadow(0 10px 6px #0b231f55);user-select:none}
+.sw-location-shrine .sw-prop{filter:saturate(.45) brightness(.8) drop-shadow(0 10px 6px #0b231f55);transition:filter 1.2s}
+.sw-restored .sw-location-shrine .sw-prop{filter:drop-shadow(0 0 22px #9ff5d0aa) drop-shadow(0 10px 6px #0b231f55)}
+.sw-restored .sw-location-shrine:not(.sw-offscreen) .sw-location-art{animation:sw-crystal 5s infinite ease-in-out}
+.sw-eclipse .sw-prop{filter:brightness(.82) saturate(.9) drop-shadow(0 0 2px #ff6a5a55) drop-shadow(0 10px 6px #1a050a66)}
+.sw-location:hover .sw-prop{filter:brightness(1.08) drop-shadow(0 0 12px #9ff0dc66) drop-shadow(0 10px 6px #0b231f55)}
+
+/* Dragon sprites: generic contexts contain the art; on the map the paws sit exactly on the nest point. */
+.dragon-sprite{position:relative;display:block;width:100%;height:100%}
+.dragon-sprite img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:50% 100%;user-select:none;pointer-events:none}
+.sw-creature .dragon-sprite img{inset:auto;left:50%;bottom:0;width:var(--dg-w);height:auto;transform:translate(-50%,calc((1 - var(--dg-paw)) * 100%))}
+.sw-creature-adult,.sw-creature-baby{left:0;right:0;bottom:0;height:300px}
+.sw-creature .dragon-sprite{transform-origin:50% 100%}
+.sw-nest:not(.sw-away):not(.sw-offscreen) .sw-creature-baby .dragon-sprite{animation:sw-baby-hop 6s ease-in-out infinite}
+.sw-harvest-ready:not(.sw-offscreen) .sw-creature-adult .dragon-sprite{animation:sw-happy 3.2s ease-in-out infinite}
+.sw-feedback-feed .dragon-sprite{animation:sw-chomp .6s ease-in-out!important}
+.sw-feedback-collect .dragon-sprite,.sw-feedback-upgrade .dragon-sprite{animation:sw-proud .75s ease-in-out!important}
+/* Face the valley centre: left-side nests look right, right-side nests look left. */
+.sw-creature .dragon-sprite img{transform:translate(-50%,calc((1 - var(--dg-paw)) * 100%)) scaleX(var(--dg-face,1))}
+.sw-nest[data-side="right"] .dragon-sprite img{transform:translate(-50%,calc((1 - var(--dg-paw)) * 100%)) scaleX(calc(-1 * var(--dg-face,1)))}
+@keyframes sw-baby-hop{0%,70%,100%{transform:translateY(0) scale(1)}76%{transform:translateY(0) scale(1.06,.92)}82%{transform:translateY(-16px) scale(.97,1.04)}88%{transform:translateY(0) scale(1.05,.94)}93%{transform:scale(1)}}
+@keyframes sw-happy{0%,100%{transform:rotate(0)}40%{transform:translateY(-3px) rotate(-1.2deg)}60%{transform:translateY(0) rotate(.6deg)}}
+@keyframes sw-chomp{0%,100%{transform:none}30%{transform:scale(1.04,.94)}60%{transform:translateY(-8px) scale(.98,1.03)}}
+@keyframes sw-proud{0%,100%{transform:none}45%{transform:translateY(-12px) scale(1.04)}}
+
+/* One-tap action bubbles and labels keep a constant on-screen size at any zoom. */
+.sanctuary-world .sw-harvest{top:-18px;padding:8px 16px 8px 10px;gap:7px;font-size:18px;border-radius:999px;border:3px solid #fff;background:#effae0;color:#1e4a3c;cursor:pointer;pointer-events:auto;transform:translateX(-50%) scale(clamp(.9,calc(1 / var(--sw-camera-scale)),2.6));transform-origin:50% 100%;box-shadow:0 6px 0 #0a201f40,0 10px 22px #0a201f66;transition:filter .15s}
+.sanctuary-world .sw-harvest b{font-weight:900}
+.sanctuary-world .sw-harvest svg{width:24px;height:24px}
+.sanctuary-world .sw-harvest:hover{filter:brightness(1.08)}
+.sanctuary-world .sw-harvest:active{translate:0 3px}
+.sw-bubble-collect{background:#effae0;color:#1e4a3c}
+.sw-bubble-feed{background:#ffe7c2!important;color:#6a3a12!important}
+.sw-bubble-hatch{background:#fff6cf!important;color:#5b4a12!important}
+.sw-has-bubble:not(.sw-offscreen) .sw-harvest{animation:sw-ready-bob 2.6s ease-in-out infinite}
+.sw-eclipse .sw-harvest{border-color:#ffd1c7}
+.sanctuary-world .sw-nest-caption,.sanctuary-world .sw-location-label{transform:translateX(-50%) scale(clamp(.9,calc(1 / var(--sw-camera-scale)),2.4))}
+.sanctuary-world .sw-nest-caption strong,.sanctuary-world .sw-location-label strong{font-size:16px}
+.sanctuary-world .sw-nest-caption small,.sanctuary-world .sw-location-label small{font-size:13px}
+.sanctuary-world .sw-has-bubble .sw-nest-caption{display:none}
+.sanctuary-world .sw-has-bubble.sw-selected .sw-nest-caption,.sanctuary-world .sw-has-bubble:hover .sw-nest-caption{display:block}
+.sw-location-plate .sw-marker,.sw-empty-art,.sw-lock-art{transform:scale(clamp(.9,calc(1 / var(--sw-camera-scale)),2.4));transform-origin:50% 100%}
+.sw-location-plate:hover .sw-marker{transform:scale(clamp(.9,calc(1 / var(--sw-camera-scale)),2.4)) translateY(-3px)}
+/* Bubbles hover just above the head of each sprite size. */
+.sanctuary-world .sw-adult .sw-harvest{top:44px}
+.sanctuary-world .sw-baby .sw-harvest{top:96px}
+.sanctuary-world .sw-egg .sw-harvest{top:116px}
+/* The valley fades in once its day plate is decoded instead of popping in tile by tile. */
+.sw-valley{opacity:0;transition:opacity .45s ease}
+.sw-art-ready .sw-valley{opacity:1}
+
+/* ---- Grounded world objects (v5) ---- */
+.sw-nest-base{position:absolute;left:50%;bottom:-34px;width:150px;translate:-50% 0;pointer-events:auto;filter:drop-shadow(0 8px 5px #0a1f1a55);user-select:none}
+.sw-locked .sw-nest-base{width:150px;filter:saturate(.7) brightness(.85) drop-shadow(0 8px 5px #0a1f1a55)}
+.sw-adult .sw-nest-ring{display:none}
+.sw-nest-ring{opacity:0}
+.sw-empty .sw-nest-ring,.sw-locked .sw-nest-ring{display:none}
+.sw-pad-shadow{left:90px;right:90px;bottom:-22px;height:40px}
+.sw-creature-egg{left:0;right:0;bottom:6px;height:118px}
+.sw-creature-egg .egg-art{position:absolute;left:50%;bottom:0;width:82px;height:auto;translate:-50% 0;filter:drop-shadow(0 0 16px #fff6d055)}
+.sw-creature-baby{bottom:-2px}
+.sw-empty-art,.sw-lock-art{bottom:-6px;width:44px;height:44px;background:#0f3033cc;border-width:2px;opacity:0;transition:opacity .2s}
+.sw-nest:hover .sw-empty-art,.sw-nest:hover .sw-lock-art,.sw-nest:focus-visible .sw-empty-art{opacity:1}
+.sw-empty:not(:hover) .sw-nest-base{animation:sw-nest-invite 3.2s ease-in-out infinite}
+@keyframes sw-nest-invite{0%,100%{filter:drop-shadow(0 8px 5px #0a1f1a55)}50%{filter:drop-shadow(0 0 14px #c9ffd9aa) drop-shadow(0 8px 5px #0a1f1a55)}}
+
+/* Selection: four cyan chevrons hugging the creature (Hatch-Dragons-style focus) */
+.sw-select{position:absolute;left:50%;bottom:-20px;width:230px;height:200px;translate:-50% 0;pointer-events:none;opacity:0;transition:opacity .2s}
+.sw-egg .sw-select,.sw-baby .sw-select,.sw-empty .sw-select{width:180px;height:150px}
+.sw-selected .sw-select{opacity:1;animation:sw-select-pulse 1.6s ease-in-out infinite}
+.sw-select i{position:absolute;width:34px;height:34px;border:7px solid #74f0dc;border-radius:6px;filter:drop-shadow(0 0 6px #74f0dcaa) drop-shadow(0 3px 0 #0f4b48)}
+.sw-select i:nth-child(1){left:0;top:0;border-right:0;border-bottom:0}
+.sw-select i:nth-child(2){right:0;top:0;border-left:0;border-bottom:0}
+.sw-select i:nth-child(3){left:0;bottom:0;border-right:0;border-top:0}
+.sw-select i:nth-child(4){right:0;bottom:0;border-left:0;border-top:0}
+.sw-eclipse .sw-select i{border-color:#ff9f8a;filter:drop-shadow(0 0 6px #ff6f5aaa) drop-shadow(0 3px 0 #4b120f)}
+@keyframes sw-select-pulse{0%,100%{scale:1}50%{scale:1.05}}
+
+/* Work timer under the creature */
+.sw-timer{position:absolute;left:50%;bottom:-48px;display:flex;flex-direction:column;align-items:center;gap:3px;transform:translateX(-50%) scale(clamp(.9,calc(1 / var(--sw-camera-scale)),2.2));transform-origin:50% 0;pointer-events:none}
+.sw-timer[hidden]{display:none}
+.sw-timer i{display:block;width:70px;height:9px;border-radius:6px;background:#0b2427cc;border:2px solid #ffffffcc;overflow:hidden}
+.sw-timer b{display:block;height:100%;background:linear-gradient(#b6f59a,#6fd36a);transition:width .9s linear}
+.sw-timer small{font:900 14px/1 Nunito,system-ui,sans-serif;color:#fff;text-shadow:0 2px 3px #000a,0 0 6px #0008;font-variant-numeric:tabular-nums}
+.sw-has-bubble .sw-timer{display:none}
+.is-menu .sw-timer{visibility:hidden}
+
+/* Wooden signposts stand on the ground next to painted stations */
+.sw-location-plate{width:90px;height:120px}
+.sw-location-plate .sw-marker{position:relative;width:76px;height:auto;display:block;border:0;border-radius:0;background:none;box-shadow:none;transform-origin:50% 100%}
+.sw-sign{display:block;width:76px;height:auto;filter:drop-shadow(0 6px 4px #0a1f1a66);user-select:none}
+.sw-sign-icon{position:absolute;left:24%;top:9%;width:62%;height:28%;display:grid;place-items:center;color:#fff4dc;filter:drop-shadow(0 1px 0 #5a3416)}
+.sw-sign-icon svg{width:22px;height:22px;stroke-width:2.4}
+.sw-location-plate:hover .sw-sign{filter:brightness(1.12) drop-shadow(0 0 10px #ffe9b0aa) drop-shadow(0 6px 4px #0a1f1a66)}
+.sw-location-ready .sw-marker{background:none;animation:sw-sign-wiggle 2.6s ease-in-out infinite}
+.sw-location-ready .sw-sign-icon{color:#fffbd0;filter:drop-shadow(0 0 6px #fff3a0)}
+.sw-location-locked .sw-sign{filter:grayscale(.5) brightness(.75) drop-shadow(0 6px 4px #0a1f1a66)}
+.sw-eclipse .sw-sign{filter:brightness(.85) drop-shadow(0 0 3px #ff6a5a55) drop-shadow(0 6px 4px #1a050a66)}
+.sw-eclipse .sw-location-plate .sw-marker{background:none;box-shadow:none}
+@keyframes sw-sign-wiggle{0%,80%,100%{rotate:0deg}85%{rotate:-4deg}90%{rotate:3deg}95%{rotate:-1deg}}
+.sw-location-plate .sw-location-label{top:calc(100% + 6px)}
+.sanctuary-world .sw-location-plate .sw-marker{transform:none}
+.sanctuary-world .sw-location-plate:hover .sw-marker{transform:translateY(-3px)}
+/* Animated plate patches: feathered so their square edges disappear into the painting. */
+.sw-ambient{position:absolute;object-fit:cover;opacity:0;pointer-events:none;transition:opacity 1.2s;-webkit-mask-image:radial-gradient(closest-side,#000 72%,transparent 100%);mask-image:radial-gradient(closest-side,#000 72%,transparent 100%)}
+.sw-ambient-day.sw-ambient-ready{opacity:1}
+.sw-eclipse .sw-ambient-day{opacity:0}
+.sw-eclipse .sw-ambient-eclipse.sw-ambient-ready{opacity:1}
+.sw-ambient-ready~.sw-brazier-glow{opacity:.5}
+
+/* ---- Fog of war (Hatch-Dragons-style darkness that clears in stages) ---- */
+.sw-zone-fog{display:none}
+.sw-fog{position:absolute;left:0;top:0;width:3168px;height:1344px;z-index:5;pointer-events:none;filter:blur(6px);opacity:.97}
+.sw-fog-clouds{position:absolute;inset:-40px;z-index:6;pointer-events:none;background-size:900px 900px;opacity:.9;-webkit-mask-size:3168px 1344px;mask-size:3168px 1344px;-webkit-mask-position:40px 40px;mask-position:40px 40px;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;animation:sw-fog-drift 60s linear infinite}
+.sw-eclipse .sw-fog-clouds{filter:hue-rotate(150deg) saturate(.6)}
+@keyframes sw-fog-drift{from{background-position:0 0}to{background-position:900px 300px}}
+.sw-fog-fx{position:absolute;inset:0;z-index:7;pointer-events:none}
+.sw-fog-fx i{position:absolute;width:26px;height:26px;margin:-13px;border-radius:50%;background:radial-gradient(circle,#bff6ff 0,#5fd5e055 45%,transparent 70%);scale:var(--fs);opacity:0;animation:sw-fog-wisp 2.1s cubic-bezier(.2,.7,.3,1) var(--fd) forwards}
+@keyframes sw-fog-wisp{0%{opacity:0;transform:translate(0,0) rotate(0)}15%{opacity:1}100%{opacity:0;transform:translate(var(--fx),var(--fy)) rotate(220deg)}}
+.sw-fogged{visibility:hidden;pointer-events:none!important}
+.sw-fog{filter:blur(5px);opacity:1;animation:sw-fog-breathe 9s ease-in-out infinite}
+@keyframes sw-fog-breathe{0%,100%{opacity:1}50%{opacity:.94}}
+.sw-fog-clouds{display:none}
+.sanctuary-world .sw-fogged{display:none!important}
+/* A single wisp of light glows where the valley's heart waits under the fog */
+.sw-wisp{position:absolute;left:1600px;top:700px;z-index:8;width:0;height:0;pointer-events:none;opacity:0;transition:opacity 1.2s}
+.sanctuary-world[data-fog="none"] .sw-wisp{opacity:1}
+.sw-wisp i{position:absolute;left:-60px;top:-60px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,#e9fffb 0,#7fe6dccc 18%,#3fb7c055 42%,transparent 70%);animation:sw-wisp 3.4s ease-in-out infinite}
+.sw-wisp i:nth-child(2){left:-14px;top:-14px;width:28px;height:28px;background:radial-gradient(circle,#fff,#bff8f0 50%,transparent 75%);animation:sw-wisp-orbit 4.2s linear infinite}
+.sw-wisp i:nth-child(3){left:-10px;top:-10px;width:20px;height:20px;background:radial-gradient(circle,#fff,#9ff0dc 50%,transparent 75%);animation:sw-wisp-orbit 5.6s linear infinite reverse}
+@keyframes sw-wisp{0%,100%{scale:.85;opacity:.75}50%{scale:1.15;opacity:1}}
+@keyframes sw-wisp-orbit{from{transform:rotate(0) translateX(70px) rotate(0)}to{transform:rotate(360deg) translateX(70px) rotate(-360deg)}}
+
+/* ---- Hand-made feel: boiling ink, weather, light, bursts ---- */
+/* "Line boil": decorative ink elements redraw on three noise seeds at 8 fps, like hand-animated cels */
+@keyframes ink-boil{0%{filter:url(#boil1)}33%{filter:url(#boil2)}66%{filter:url(#boil3)}}
+.sw-select i,.sw-sign,.sw-timer i,.sw-empty-art,.sw-lock-art{animation:ink-boil .375s steps(1) infinite}
+.sw-selected .sw-select{animation:sw-select-pulse 1.6s ease-in-out infinite}
+.sw-reduced-motion .sw-select i,.sw-reduced-motion .sw-sign{animation:none}
+/* Falling leaves by day, drifting embers during the eclipse (screen space, behind the HUD) */
+.sw-weather{position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden}
+.sw-weather i{position:absolute;top:-40px;width:18px;height:12px;border-radius:0 80% 0 80%;background:linear-gradient(135deg,#b6d96a,#6f9a3d);opacity:.0;scale:var(--ws);animation:sw-leaf var(--wt) linear var(--wd) infinite}
+@keyframes sw-leaf{0%{transform:translate(0,0) rotate(0);opacity:0}8%{opacity:.85}50%{transform:translate(var(--wx),55vh) rotate(260deg)}92%{opacity:.75}100%{transform:translate(calc(var(--wx) * -.4),110vh) rotate(540deg);opacity:0}}
+.sw-eclipse .sw-weather i{width:7px;height:7px;border-radius:50%;background:radial-gradient(circle,#ffd2a0,#ff5a3c 60%,transparent);box-shadow:0 0 8px #ff6a3c;animation-name:sw-ember-rise;top:auto;bottom:-20px}
+@keyframes sw-ember-rise{0%{transform:translate(0,0);opacity:0}10%{opacity:.9}100%{transform:translate(var(--wx),-105vh);opacity:0}}
+/* Soft god rays through the canopy by day */
+.sw-rays{position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden;mix-blend-mode:screen;transition:opacity 2s}
+.sw-rays i{position:absolute;top:-20%;width:16vw;height:150%;background:linear-gradient(180deg,#fff7d044,#fff7d010 60%,transparent);transform:rotate(24deg);filter:blur(10px);animation:sw-ray 11s ease-in-out infinite}
+.sw-rays i:nth-child(1){left:22%}.sw-rays i:nth-child(2){left:48%;width:9vw;animation-delay:-4s}.sw-rays i:nth-child(3){left:71%;width:12vw;animation-delay:-7s}
+@keyframes sw-ray{0%,100%{opacity:.25}50%{opacity:.75}}
+.sw-eclipse .sw-rays{opacity:0}
+.sw-reduced-motion .sw-weather,.sw-reduced-motion .sw-rays{display:none}
+/* Painted light burst on hatch / growth */
+.sw-burst{position:absolute;left:50%;bottom:70px;width:0;height:0;pointer-events:none;z-index:4}
+.sw-burst:before{content:'';position:absolute;left:-90px;top:-90px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,#ffffff 0,#e9fff8cc 25%,#8ff0dc55 50%,transparent 70%);animation:sw-flash .9s ease-out forwards}
+.sw-burst i{position:absolute;left:-3px;top:-90px;width:6px;height:70px;border-radius:6px;background:linear-gradient(#fffbe0,#8ff0dc00);transform-origin:3px 90px;opacity:0;animation:sw-ray-burst .9s ease-out forwards}
+.sw-burst i:nth-child(n){rotate:calc(var(--n,0) * 30deg)}
+.sw-burst i:nth-child(1){--n:0}.sw-burst i:nth-child(2){--n:1}.sw-burst i:nth-child(3){--n:2}.sw-burst i:nth-child(4){--n:3}.sw-burst i:nth-child(5){--n:4}.sw-burst i:nth-child(6){--n:5}.sw-burst i:nth-child(7){--n:6}.sw-burst i:nth-child(8){--n:7}.sw-burst i:nth-child(9){--n:8}.sw-burst i:nth-child(10){--n:9}.sw-burst i:nth-child(11){--n:10}.sw-burst i:nth-child(12){--n:11}
+@keyframes sw-flash{0%{scale:.2;opacity:1}100%{scale:2.2;opacity:0}}
+@keyframes sw-ray-burst{0%{opacity:0;scale:.3}25%{opacity:1}100%{opacity:0;scale:1.5}}
+/* Squash & stretch when tapping creatures and nests */
+.sw-nest:active .sw-creature .dragon-sprite,.sw-nest:active .egg-art{animation:sw-squash .35s ease-out}
+@keyframes sw-squash{0%{transform:scale(1)}30%{transform:scale(1.08,.88)}60%{transform:scale(.95,1.06)}100%{transform:scale(1)}}
+/* Egg wobbles harder as hatching nears, sparkles when ready */
+.sw-egg.sw-has-bubble .sw-creature-egg{animation:sw-egg-ready 1.4s ease-in-out infinite}
+@keyframes sw-egg-ready{0%,60%,100%{transform:rotate(0)}68%{transform:rotate(-7deg)}76%{transform:rotate(6deg)}84%{transform:rotate(-3deg)}}
+/* Dragon fruit tree */
+.sw-location-tree{min-width:0;min-height:0;width:200px;height:240px}
+.sw-location-tree .sw-location-art{width:190px;height:236px}
+.sw-tree-growing .sw-prop{animation:sw-tree-sway 4s ease-in-out infinite;transform-origin:50% 95%}
+.sw-tree-ripe .sw-prop{filter:drop-shadow(0 0 16px #ffb08088) drop-shadow(0 10px 6px #0b231f55);animation:sw-tree-sway 2.6s ease-in-out infinite;transform-origin:50% 95%}
+@keyframes sw-tree-sway{0%,100%{rotate:0deg}50%{rotate:1.6deg}}
+.sw-location-tree .sw-timer{bottom:-46px}
+.sw-location-tree .sw-harvest{top:10px}
+.sw-location-tree .sw-harvest svg{color:#ff8a6a}
+
+/* ---- v8: buildings are painted into the plate; spots are invisible hit areas with a floating chip ---- */
+.sanctuary-world .sw-location-plate:hover .sw-marker,.sanctuary-world .sw-location-plate .sw-marker{background:none!important;box-shadow:none!important;border:0!important}
+.sw-location-spot{min-width:0;min-height:0;cursor:pointer}
+.sw-location-spot .sw-location-art{position:absolute;inset:0;width:auto;height:auto;pointer-events:auto}
+.sw-spot-glow{position:absolute;inset:8% 4% 0;border-radius:50%;background:radial-gradient(ellipse at 50% 70%,#fff6c855,transparent 65%);opacity:0;transition:opacity .25s;mix-blend-mode:screen}
+.sw-location-spot:hover .sw-spot-glow,.sw-location-spot:focus-visible .sw-spot-glow{opacity:1}
+.sw-chip{position:absolute;left:50%;top:-34px;display:grid;place-items:center;width:52px;height:52px;margin-left:-26px;border-radius:50%;background:#fbf3dc;color:#2a4a3c;border:3px solid #3b2a1c;box-shadow:0 5px 0 #3b2a1c55,0 10px 18px #0a1f1a66;transform:scale(clamp(.9,calc(1 / var(--sw-camera-scale)),2.2));transform-origin:50% 100%;animation:sw-chip-bob 3.2s ease-in-out infinite,ink-boil .375s steps(1) infinite}
+.sw-chip svg{width:24px;height:24px;stroke-width:2.4}
+.sw-location-spot:hover .sw-chip{background:#fff;color:#1d4b3c}
+.sw-location-ready .sw-chip{background:#ffe9a8;border-color:#7a4a12;animation:sw-chip-bob 1.4s ease-in-out infinite,ink-boil .375s steps(1) infinite}
+.sw-location-locked .sw-chip{filter:grayscale(.7) brightness(.8)}
+.sw-eclipse .sw-chip{background:#ffe2d6;border-color:#4a1612}
+@keyframes sw-chip-bob{0%,100%{translate:0 0}50%{translate:0 -8px}}
+.sw-location-spot .sw-location-label{top:calc(100% + 4px)}
+.sw-location-shrine .sw-chip{top:-60px}
+.sw-restored .sw-location-shrine .sw-spot-glow{opacity:1;background:radial-gradient(ellipse at 50% 30%,#bfffe0aa,#7fe6c033 40%,transparent 70%);animation:sw-ember 3s ease-in-out infinite}
+
+/* ---- v8 hand-drawn pass: inked, boiling outlines on everything that lives in the world ---- */
+@keyframes ink-line{0%{filter:url(#ink1)}33%{filter:url(#ink2)}66%{filter:url(#ink3)}}
+.sw-creature .dragon-sprite img,.sw-creature-egg .egg-art,.sw-nest-base,.sw-location-tree .sw-prop{animation:ink-line .375s steps(1) infinite}
+.sw-creature{filter:drop-shadow(0 10px 6px #0b231f40)}
+.sw-eclipse .sw-creature{filter:drop-shadow(0 0 3px #ff6a5a66) drop-shadow(0 10px 6px #1a050a55)}
+.sw-reduced-motion .sw-creature .dragon-sprite img,.sw-reduced-motion .sw-nest-base,.sw-reduced-motion .egg-art{animation:none;filter:url(#ink1)}
+/* Watercolour paper over the painting: low-frequency blotches multiplied in */
+.sw-paper{position:absolute;inset:0;z-index:3;pointer-events:none;mix-blend-mode:multiply;opacity:.35;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='800'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.006 .009' numOctaves='4' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 .86 0 0 0 0 .82 0 0 0 0 .72 0 0 0 1.4 -.35'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23w)'/%3E%3C/svg%3E");background-size:800px 800px}
+
+/* ---- v8 selection: glowing silhouette, a pool of light and a slow rune ring (no frame) ---- */
+@keyframes sel-line{0%{filter:url(#sel1)}33%{filter:url(#sel2)}66%{filter:url(#sel3)}}
+.sw-selected .sw-creature .dragon-sprite img,.sw-selected .sw-creature-egg .egg-art{animation:sel-line .375s steps(1) infinite}
+.sw-select{left:50%;bottom:-40px;width:260px;height:110px;translate:-50% 0;animation:none!important}
+.sw-egg .sw-select,.sw-baby .sw-select,.sw-empty .sw-select{width:190px;height:84px;bottom:-34px}
+.sw-select:before{content:'';position:absolute;inset:0;border-radius:50%;background:radial-gradient(ellipse,#e9fff6cc 0,#9ff0dc66 35%,transparent 70%);mix-blend-mode:screen;animation:sw-pool 2.4s ease-in-out infinite}
+.sw-rune-ring{position:absolute;inset:0;width:100%;height:100%;color:#f2fff8;overflow:visible;filter:drop-shadow(0 0 4px #9ff0dc)}
+.sw-rune-ring ellipse:first-child{animation:sw-rune-spin 9s linear infinite}
+@keyframes sw-rune-spin{to{stroke-dashoffset:-310}}
+@keyframes sw-pool{0%,100%{opacity:.75;scale:1}50%{opacity:1;scale:1.06}}
+.sw-select i,.sw-eclipse .sw-select i{all:unset;position:absolute;left:50%;bottom:40%;width:6px;height:6px;border-radius:50%;background:#f4fff9;box-shadow:0 0 8px 2px #9ff0dc;opacity:0;animation:sw-mote 2.2s ease-out infinite}
+.sw-select i:nth-child(2){margin-left:-70px;animation-delay:0s}.sw-select i:nth-child(3){margin-left:-25px;animation-delay:-.5s}.sw-select i:nth-child(4){margin-left:30px;animation-delay:-1.1s}.sw-select i:nth-child(5){margin-left:75px;animation-delay:-1.6s}.sw-select i:nth-child(6){margin-left:5px;animation-delay:-.8s}
+@keyframes sw-mote{0%{opacity:0;transform:translateY(0) scale(.6)}20%{opacity:1}100%{opacity:0;transform:translateY(-150px) scale(1)}}
+.sw-eclipse .sw-select:before{background:radial-gradient(ellipse,#ffe2d6cc 0,#ff9f8a66 35%,transparent 70%)}
+.sw-eclipse .sw-rune-ring{color:#ffe6dc;filter:drop-shadow(0 0 4px #ff7a5a)}
+.sw-eclipse .sw-select i{background:#fff0e8;box-shadow:0 0 8px 2px #ff8a6a}
+.sw-nest.tutorial-focus .sw-select{opacity:1}
+
+/* ---- v10: overlay layer above all sprites ---- */
+.sw-ui-layer{position:absolute;inset:0;z-index:9;pointer-events:none}
+.sw-ui-layer .sw-ov{pointer-events:none!important;background:none;cursor:default}
+.sw-ui-layer .sw-ov>*{pointer-events:none}
+.sw-ui-layer .sw-ov .sw-harvest,.sw-ui-layer .sw-ov .sw-chip{pointer-events:auto;cursor:pointer}
+.sw-ui-layer .sw-ov.sw-fogged{display:none!important}
+.sanctuary-world .sw-ov.is-hover .sw-nest-caption,.sanctuary-world .sw-ov.is-hover .sw-location-label{opacity:1;translate:0 0}
+.sw-ov.is-hover .sw-chip{background:#fff;color:#1d4b3c}
+.sw-ov.sw-location-spot .sw-chip{position:absolute}
+.sw-ov .sw-location-label{position:absolute}
+/* labels never stay open on top of other things unless they matter */
+.sanctuary-world .sw-ov.sw-selected .sw-nest-caption{opacity:1}
+
+/* ---- Expedition: the dragon leaps, flaps off toward the ruins and is gone until it lands again ---- */
+.sw-away .sw-creature{opacity:0;visibility:hidden}
+.sw-flying-off .sw-creature{visibility:visible;opacity:1;animation:sw-fly-off 1.6s cubic-bezier(.5,0,.7,.4) forwards!important}
+@keyframes sw-fly-off{0%{transform:none;opacity:1}18%{transform:translateY(6px) scale(1.06,.9)}32%{transform:translateY(-40px) scale(.96,1.06) rotate(-6deg)}100%{transform:translate(520px,-520px) scale(.25) rotate(-18deg);opacity:0}}
+.sw-landing .sw-creature{animation:sw-land 1.4s cubic-bezier(.2,.8,.3,1) both!important}
+@keyframes sw-land{0%{transform:translate(520px,-520px) scale(.25) rotate(-18deg);opacity:0}60%{transform:translateY(-30px) scale(1) rotate(4deg);opacity:1}80%{transform:translateY(4px) scale(1.08,.9)}100%{transform:none}}
+.sw-flying-off .sw-pad-shadow,.sw-landing .sw-pad-shadow{animation:sw-dust .9s ease-out}
+@keyframes sw-dust{0%{opacity:1;scale:1}40%{opacity:.9;scale:1.6}100%{opacity:.45;scale:1}}
+.sw-away .sw-pad-shadow{opacity:.2}
+
+/* Adult bubbles sit just above the (smaller) heads */
+
+/* Empty nest breathes and invites: rustling twigs, a soft pool of light, rising motes */
+.sw-empty .sw-nest-base{animation:sw-nest-rustle 3.6s ease-in-out infinite,ink-line .375s steps(1) infinite!important;transform-origin:50% 90%}
+@keyframes sw-nest-rustle{0%,100%{rotate:0deg;scale:1}30%{rotate:-1.2deg;scale:1.02 .98}60%{rotate:1deg;scale:.99 1.02}}
+.sw-empty .sw-select{opacity:.65}
+.sw-empty:hover .sw-select{opacity:1}
+.sw-empty .sw-rune-ring{opacity:.5}
+.sanctuary-world .sw-ov:has(.sw-timer:not([hidden])) .sw-nest-caption{top:calc(100% + 52px)}
+
+/* ---- Realm map: zoom out past the valley to see the whole world ---- */
+.sw-realm{position:absolute;inset:0;z-index:4;display:grid;place-items:center;background:#071a1f;opacity:0;pointer-events:none;transition:opacity .6s ease}
+.sw-realm-map{position:relative;width:min(100%,calc(100vh * 1.79));aspect-ratio:3200/1786;transform:scale(1.35);transition:transform .8s cubic-bezier(.2,.8,.3,1)}
+.sw-realm-map>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;user-select:none}
+.sw-realm-open .sw-realm{opacity:1;pointer-events:auto}
+.sw-realm-open .sw-realm-map{transform:none}
+.sw-realm-open .sw-stage{transform-origin:50% 50%;opacity:0;transition:opacity .4s}
+.sw-realm-pin{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 14px 10px;border-radius:16px;border:2px solid #8ff0dc66;background:#0c2a2de6;color:#eefaf4;font-family:inherit;cursor:pointer;box-shadow:0 8px 20px #0007;animation:sw-chip-bob 3.4s ease-in-out infinite}
+.sw-realm-pin strong{font-size:17px;font-weight:900}
+.sw-realm-pin small{font-size:13px;color:#a9d0c5}
+.sw-realm-icon{display:grid;place-items:center;width:34px;height:34px;margin-top:-26px;border-radius:50%;background:#fbf3dc;color:#2a4a3c;border:3px solid #3b2a1c}
+.sw-realm-pin.is-open{border-color:#8ff0dc;background:#134142f0;box-shadow:0 0 0 6px #8ff0dc22,0 8px 20px #0007}
+.sw-realm-pin.is-locked{opacity:.85}
+.sw-realm-pin.is-locked .sw-realm-icon{background:#cfd6d3}
+.sw-realm-shake{animation:sw-realm-shake .45s ease!important}
+@keyframes sw-realm-shake{25%{transform:translate(calc(-50% - 6px),-50%)}75%{transform:translate(calc(-50% + 6px),-50%)}}
+.sw-realm-title{position:absolute;top:84px;left:50%;transform:translateX(-50%);font:900 22px Nunito,sans-serif;color:#eefaf4;text-shadow:0 2px 8px #000a;pointer-events:none}
+@media(max-width:760px){.sw-realm-map{width:100%;height:100%;aspect-ratio:auto}.sw-realm-map>img{object-fit:cover}.sw-realm-pin strong{font-size:14px}.sw-realm-pin small{display:none}}
+.sw-realm-title{top:auto;bottom:118px;font-size:20px;opacity:.9}
+/* locked lands sit under a drifting veil of mist */
+.sw-realm-pin.is-locked:before{content:'';position:absolute;left:50%;top:50%;width:min(26vw,380px);aspect-ratio:1.5;transform:translate(-50%,-55%);border-radius:50%;background:radial-gradient(ellipse,#cfe3e2aa 0,#a9c4c766 35%,#6f8f9433 55%,transparent 72%);filter:blur(10px);z-index:-1;pointer-events:none;animation:sw-realm-mist 9s ease-in-out infinite}
+@keyframes sw-realm-mist{0%,100%{opacity:.85;translate:0 0}50%{opacity:1;translate:12px -6px}}
+.sw-realm-pin{z-index:1}
+.sw-cracking .sw-creature-egg{animation:sw-crack .7s ease-in both!important}
+.sw-cracking .sw-creature-egg:after{content:'';position:absolute;left:50%;top:30%;width:40px;height:50px;margin-left:-20px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 50'%3E%3Cpath d='M20 0 14 14l9 6-7 12 8 6-6 12' fill='none' stroke='%233b2a1c' stroke-width='3' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;opacity:0;animation:sw-crack-line .7s steps(3) forwards}
+@keyframes sw-crack{0%{transform:none}15%{transform:rotate(-8deg)}30%{transform:rotate(8deg)}45%{transform:rotate(-10deg) scale(1.03)}60%{transform:rotate(10deg) scale(1.05)}80%{transform:scale(1.12,.9);filter:brightness(1.3)}100%{transform:scale(.9,1.12);filter:brightness(2)}}
+@keyframes sw-crack-line{0%{opacity:0;clip-path:inset(0 0 100% 0)}50%{opacity:1;clip-path:inset(0 0 50% 0)}100%{opacity:1;clip-path:inset(0)}}
+
+/* ---- v10 audit fixes ---- */
+/* Layer order: sprites < fog < fog fx < wisp < labels/bubbles */
+.sw-node-layer{z-index:4}
+/* Adults have no nest base: an invisible body-sized hit area makes them tappable */
+.sw-hit{position:absolute;left:50%;bottom:4px;width:62%;height:62%;translate:-50% 0;pointer-events:auto;border-radius:40%}
+.sw-flying-off .sw-hit,.sw-away .sw-hit{display:none}
+/* Bubbles float just above the heads of the (smaller) sprites */
+.sanctuary-world .sw-adult .sw-harvest{top:62px}
+.sanctuary-world .sw-baby .sw-harvest{top:118px}
+.sanctuary-world .sw-egg .sw-harvest{top:118px}
+.sanctuary-world .sw-ov.is-hover.sw-has-bubble .sw-nest-caption{display:block}
+/* Away dragons: the spot shows a small travel chip instead of a selection pool on bare ground */
+.sw-away .sw-select{display:none}
+.sw-away-chip{position:absolute;left:50%;bottom:20px;transform:translateX(-50%) scale(clamp(.9,calc(1 / var(--sw-camera-scale)),2.2));transform-origin:50% 100%;padding:6px 12px;border-radius:999px;background:#0f2e31e6;border:2px solid #8ff0dc88;color:#eefaf4;font:900 15px Nunito,sans-serif;white-space:nowrap;font-variant-numeric:tabular-nums;box-shadow:0 6px 14px #0a1f2466}
+.sw-eclipse .sw-away-chip{background:#2a0f17e6;border-color:#ff9f8f88}
+.sanctuary-world .sw-ov:has(.sw-timer:not([hidden])) .sw-nest-caption small{display:none}
+.sanctuary-world .sw-harvest.is-lacking{background:#e8e3d6!important;color:#8a5a3a!important;border-color:#ffd2b0;filter:saturate(.6)}
+.sanctuary-world .sw-harvest.is-lacking:after{content:'2';margin-left:2px;font-weight:900;color:#c0422b}
+.hint-pulse{animation:hint-pulse 1s ease-in-out 3!important}
+@keyframes hint-pulse{0%,100%{box-shadow:0 0 0 0 #ffe58f00}50%{box-shadow:0 0 0 14px #ffe58faa;transform:scale(1.15)}}
+/* v11 audit fixes */
+.sw-ui-layer .sw-ov .sw-away-chip{pointer-events:auto;cursor:pointer}
+.sanctuary-world .sw-harvest.is-lacking:after{content:none}
+/* the pulse rides on a ring so the chip keeps its zoom scale and bob */
+.hint-pulse{animation:none!important;position:relative}
+.hint-pulse:before{content:'';position:absolute;inset:-10px;border-radius:50%;border:4px solid #ffe58f;pointer-events:none;animation:hint-ring 1s ease-out 3}
+@keyframes hint-ring{0%{opacity:1;scale:.8}100%{opacity:0;scale:1.5}}

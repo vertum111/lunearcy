@@ -1,0 +1,25 @@
+# Render blueprint: the Lunearcy gas sponsor (testnet). The game itself is a static site on Netlify.
+services:
+  - type: web
+    name: lunearcy-sponsor
+    runtime: node
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    plan: free
+    envVars:
+      - key: CONTRACT_ID
+        value: lunearcy-mw6wrkww.testnet
+      - key: SPONSOR_ACCOUNT_ID
+        sync: false
+      - key: SPONSOR_PRIVATE_KEY
+        sync: false
+      - key: ALLOWED_ORIGINS
+        sync: false
+      - key: TOPUP_NEAR
+        value: "0.1"
+      - key: LOW_NEAR
+        value: "0.05"
+      - key: DAILY_CAP
+        value: "500"

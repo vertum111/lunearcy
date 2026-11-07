@@ -1,0 +1,70 @@
+{
+  "network": "testnet",
+  "status": "deployed-and-smoke-tested",
+  "rpc": "https://test.rpc.fastnear.com",
+  "standard": "nep245",
+  "transactions": [
+    {
+      "label": "deploy",
+      "hash": "Gj9eMDVVjT2ckVarYHznmXzsoHPJr1bkSjb29Ma8f4BV",
+      "explorer": "https://testnet.nearblocks.io/txns/Gj9eMDVVjT2ckVarYHznmXzsoHPJr1bkSjb29Ma8f4BV"
+    },
+    {
+      "label": "new",
+      "hash": "9S5m8vGd1ihbF98dnPJ5SpeKJVf46oowrcchgtZw9MpV",
+      "explorer": "https://testnet.nearblocks.io/txns/9S5m8vGd1ihbF98dnPJ5SpeKJVf46oowrcchgtZw9MpV"
+    },
+    {
+      "label": "create_smoke_player",
+      "hash": "6bBLtmUA3s3nuQM71McA4ViyKC5DMFR9yW5UqtBKENBz",
+      "explorer": "https://testnet.nearblocks.io/txns/6bBLtmUA3s3nuQM71McA4ViyKC5DMFR9yW5UqtBKENBz"
+    },
+    {
+      "label": "join",
+      "hash": "H56mgaPkf63rgiikhTbHErrRwhb4LkgRMxrPkhXRWpwW",
+      "explorer": "https://testnet.nearblocks.io/txns/H56mgaPkf63rgiikhTbHErrRwhb4LkgRMxrPkhXRWpwW"
+    },
+    {
+      "label": "forage",
+      "hash": "J4jPFmyRNmHpBAHMbwRqotKCzzMA1nUHEYtDnPA5qBiC",
+      "explorer": "https://testnet.nearblocks.io/txns/J4jPFmyRNmHpBAHMbwRqotKCzzMA1nUHEYtDnPA5qBiC"
+    }
+  ],
+  "checks": {
+    "joined": true,
+    "foraged": true,
+    "lucyHasWallet": true,
+    "nep245Balance": true
+  },
+  "contractId": "lunearcy-mw6wrkww.testnet",
+  "wasmSha256": "bd05fc35a064851971e99629d891e8a30b5a582af97f929db1b4bf753302d551",
+  "wasmBytes": 434454,
+  "config": {
+    "game": "lunearcy",
+    "genesis": "1794086482676",
+    "lucy": "lunearcy-mw6wrkww.testnet",
+    "max_players": 5000,
+    "network_guard": "testnet",
+    "phase_ms": "120000",
+    "players": 0,
+    "standard": "nep245"
+  },
+  "market": {
+    "wallet": "150",
+    "stock_berries": "0",
+    "stock_crystals": "0",
+    "eclipse": false,
+    "genesis": "1794086482676",
+    "price_berries": "3",
+    "price_crystals": "8",
+    "resell_at": "1794086502676",
+    "history_berries": [
+      3
+    ],
+    "history_crystals": [
+      8
+    ],
+    "now": "1794086495480"
+  },
+  "updatedAt": "2026-11-07T21:21:36.435Z"
+}

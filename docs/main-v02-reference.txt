@@ -1,0 +1,126 @@
+import {SPECIES,RESOURCE,createState,act,tick,phase,HATCH_MS,BERRY_EGG_COST,hydrate,objective} from './engine.js';
+import {icon,egg,dragon} from './art.js';
+const session=new URLSearchParams(location.search).get('session');
+const KEY=session?`dragon-demo-${session}`:'lunearcy-sanctuary-v1';let state;try{const saved=JSON.parse(localStorage.getItem(KEY));state=saved?hydrate(saved):createState();}catch{state=createState();}
+let tab='home',selected=state.dragons[0]?.id,notice='',noticeUntil=0,lastSignature='',teamIds=null;
+const root=document.querySelector('#app');const fmt=n=>Math.max(0,Math.ceil(n/1000));const time=n=>`${Math.floor(fmt(n)/60)}:${String(fmt(n)%60).padStart(2,'0')}`;const resIcon={coins:'coin',berries:'berry',embers:'flame',ore:'ore',relics:'relics'};
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch{notice='Не вдалося зберегти прогрес у браузері.';noticeUntil=Date.now()+5000;}}
+function toast(text){notice=text;noticeUntil=Date.now()+4500;document.querySelector('#toast').innerHTML=`${icon('check')}<span>${text}</span>`;document.querySelector('#toast').classList.add('visible');}
+function cost(items){return Object.entries(items).map(([k,n])=>`<span class="cost ${state.resources[k]<n?'short':''}">${icon(resIcon[k],16)}${n}</span>`).join('');}
+function button(label,action,extra='',disabled=false){return `<button class="action ${extra}" data-action="${action}" ${disabled?'disabled':''}>${label}</button>`;}
+function heading(kicker,title,desc){return `<span class="eyebrow">${kicker}</span><h2>${title}</h2>${desc?`<p class="muted">${desc}</p>`:''}`;}
+function chosenTeam(){const adults=state.dragons.filter(d=>d.stage==='adult'),workers=adults.filter(d=>d.species!=='moss');return teamIds===null?(workers.length?workers:adults).map(d=>d.id):teamIds.filter(id=>adults.some(d=>d.id===id));}
+function mainShell(){root.innerHTML=`<div class="game-shell"><div class="world-backdrop"></div><div class="world-shade"></div><div class="phase-wash"></div><div class="motes" aria-hidden="true">${Array.from({length:15},(_,i)=>`<i style="--x:${(i*137)%100}%;--y:${(i*53)%100}%;--delay:${i*-.9}s"></i>`).join('')}</div>
+<header><a class="brand" href="${location.pathname+location.search}" aria-label="Драконячий притулок — робоче демо"><span class="brand-emblem">${icon('egg',29)}</span><span>Притулок<small>РОБОЧЕ ДЕМО · НАЗВА ТИМЧАСОВА</small></span></a><div class="balances" id="balances"></div><button class="utility" data-action="help" aria-label="Як грати">?</button></header>
+<main><section class="world" aria-label="Драконячий притулок"><div class="location"><span class="eyebrow">ДОЛИНА ПЕРШОГО СВІТЛА</span><h1>Тут починається<br><em>твоя легенда.</em></h1><p>Маленькі крила. Великі відкриття.</p></div><button class="phase-badge" data-action="phaseHelp" id="phase-badge"></button><div id="nest-layer" class="nest-layer"></div><button class="forage-node" data-action="forage" id="forage-node"></button><button class="shrine-node" data-tab="collection" id="shrine-node" aria-label="Серце долини"></button><button class="objective" id="objective" data-action="goal"></button><div class="world-caption"><span class="live-dot"></span> Живий притулок <span>·</span> прогрес зберігається</div></section><aside class="inspector" id="inspector" aria-label="Дії та деталі"></aside></main>
+<nav class="bottom-nav" aria-label="Меню гри">${[['home','home','Притулок'],['eggs','egg','Яйця'],['collection','book','Дракони'],['market','market','Ринок'],['expedition','compass','Експедиції']].map(([id,ic,t])=>`<button data-tab="${id}" ${tab===id?'class="active"':''}>${icon(ic)}<span>${t}</span></button>`).join('')}</nav><span class="prototype-label">ПРОТОТИП · ЛОКАЛЬНА ЕКОНОМІКА</span><div id="toast" role="status" aria-live="polite"></div><dialog id="dialog"></dialog></div>`;render();}
+const positions=[[50,49],[77,68],[27,68],[18,35],[82,35]];
+function renderWorld(){const now=Date.now();document.querySelector('#nest-layer').innerHTML=positions.map(([x,y],i)=>{const d=state.dragons[i];if(i>=state.slots)return `<button class="nest locked" style="left:${x}%;top:${y}%" data-action="expandView" aria-label="Відкрити нову ділянку">${icon('lock',22)}<span>Під туманом</span></button>`;if(!d)return `<button class="nest empty" style="left:${x}%;top:${y}%" data-tab="eggs" aria-label="Поселити дракона у вільне гніздо"><span class="empty-mark">${icon('plus',26)}</span><span class="nest-label">Вільне гніздо</span></button>`;const sp=SPECIES[d.species],away=state.expedition?.team.includes(d.id);return `<button class="nest inhabited ${d.id===selected&&tab==='home'?'selected':''} ${d.stage==='egg'?'egg-nest':''} ${away?'away':''}" style="left:${x}%;top:${y}%;--creature-color:${sp.color}" data-select="${d.id}" aria-label="${sp.name}, ${d.stage==='egg'?'яйце':d.stage==='baby'?'малюк':'дорослий'}, ${d.ready?'готовий збір':'обрати'}"><span class="nest-ground"></span><span class="creature ${d.stage}">${d.stage==='egg'?egg(sp.color):dragon(d.species,d.stage)}</span>${d.stage==='adult'&&d.ready&&!away?`<span class="harvest-bubble">${icon(resIcon[sp.resource],18)} +${d.ready*sp.output*d.level}</span>`:''}<span class="nest-label">${d.stage==='egg'?'Таємниче яйце':sp.name}<small>${away?'В експедиції':d.stage==='egg'?(now>=d.hatchAt?'Готове вилупитись':time(d.hatchAt-now)):d.stage==='baby'?`Малюк · ${d.feeds}/3`:`Рівень ${d.level}`}</small></span></button>`;}).join('');}
+function detail(){const d=state.dragons.find(d=>d.id===selected)||state.dragons[0];selected=d.id;const sp=SPECIES[d.species],now=Date.now(),away=state.expedition?.team.includes(d.id);return `${heading(d.stage==='egg'?'НОВЕ ЖИТТЯ':sp.kind,d.stage==='egg'?'Хтось чекає всередині':sp.name,'')}<div class="portrait ${d.stage==='egg'?'egg-portrait':''}" style="--glow:${sp.color}">${d.stage==='egg'?egg(sp.color):dragon(d.species,d.stage)}<span class="portrait-orbit"></span></div><p class="lore">${d.stage==='egg'?'Зігрій яйце у затишному гнізді. Ще трохи — і ви познайомитесь.':sp.desc}</p>${d.stage==='egg'?`<div class="stat-line"><span>Пробудження</span><b id="hatch-timer">${time(d.hatchAt-now)}</b></div><div class="progress"><i style="width:${Math.min(100,100*(1-(d.hatchAt-now)/HATCH_MS))}%"></i></div>${button(now>=d.hatchAt?`${icon('egg')} Допомогти вилупитись`:'Яйце зігрівається…','hatch','primary',now<d.hatchAt)}`:d.stage==='baby'?`<div class="stat-line"><span>До дорослішання</span><b>${d.feeds} / 3 годування</b></div><div class="feed-dots">${[0,1,2].map(i=>`<span class="${i<d.feeds?'filled':''}">${icon('berry',21)}</span>`).join('')}</div>${button(`${icon('berry')} Нагодувати ${cost({berries:2})}`,'feed','primary',state.resources.berries<2)}${state.resources.berries<2?foodActions():''}<p class="hint">Дорослий ${sp.name} ${sp.job.toLowerCase()}.</p>`:`<div class="job"><span class="resource-icon">${icon(resIcon[sp.resource],26)}</span><div><strong>${sp.job}</strong><small>${sp.output*d.level} за ${sp.cycle} с · до 5 циклів у запасі</small></div></div><div class="stat-line"><span>${away?'Команда досліджує руїни':d.ready?'Можна забрати':'Наступний збір'}</span><b id="production-timer">${away?'В експедиції':d.ready?`+${d.ready*sp.output*d.level}`:time(d.next-now)}</b></div><div class="progress"><i style="width:${away?0:d.ready?100:Math.max(0,100*(1-(d.next-now)/(sp.cycle*1000)))}%"></i></div>${button(`${icon('leaf')} Зібрати ${RESOURCE[sp.resource].toLowerCase()}`,'collect','primary',!d.ready||away)}${button(`Покращити до рівня ${d.level+1} ${cost({coins:d.level*25,berries:d.level*3})}`,'upgrade','secondary',d.level>=3||away||state.resources.coins<d.level*25||state.resources.berries<d.level*3)}`}`;}
+function eggShop(){
+ const speciesCount=new Set(state.dragons.map(d=>d.species)).size;
+ return `${heading('НОВІ МЕШКАНЦІ','Кого запросимо?','Спершу відкрий три різні види. Монети закінчились? Яйця можна отримати за ягоди.')}<div class="cards">${Object.entries(SPECIES).map(([id,sp])=>{
+ const duplicate=speciesCount<3&&state.dragons.some(d=>d.species===id),full=state.dragons.length>=state.slots;
+ return `<article class="species-card"><div class="mini-dragon">${dragon(id)}</div><div><h3>${sp.name}</h3><p>${sp.job}</p>${duplicate?'<p class="hint">Уже є у притулку · спершу відкрий інші види</p>':`${button(`Купити яйце ${cost({coins:sp.eggCost})}`,`buyEgg:${id}`,'secondary',full||state.resources.coins<sp.eggCost)}${button(`Обміняти ягоди ${cost({berries:BERRY_EGG_COST[id]})}`,`barter:${id}`,'secondary',full||state.resources.berries<BERRY_EGG_COST[id])}`}</div></article>`;
+ }).join('')}</div><p class="hint">Гнізда: ${state.dragons.length} / ${state.slots}. Вилуплення: 8 секунд у демо.</p>${foodActions()}`;
+}
+function foodActions(){return `${button(`${icon('berry')} Зібрати 3 лісові ягоди`,'forage','secondary',Date.now()<state.forageAt)}<p class="hint" id="forage-hint">Безкоштовний збір раз на 20 с. ${Date.now()<state.forageAt?'Наступний: '+time(state.forageAt-Date.now()):'Ягоди вже дозріли.'}</p>${button(`Купити 6 ягід ${cost({coins:20})}`,'buyFood','secondary',state.resources.coins<20)}`;}
+function collection(){
+ const adults=new Set(state.dragons.filter(d=>d.stage==='adult').map(d=>d.species)).size;
+ const canRestore=adults===3&&state.crafted>0&&state.expeditions>0&&state.resources.embers>=4&&state.resources.ore>=4&&state.resources.relics>=6;
+ return `${heading('ТВОЯ ЗГРАЯ','Маленькі легенди',`${new Set(state.dragons.map(d=>d.species)).size} / 3 видів відкрито · ${adults} дорослих видів`)}<div class="cards">${state.dragons.map(d=>`<button class="collection-card" data-select="${d.id}"><span class="mini-dragon">${d.stage==='egg'?egg(SPECIES[d.species].color):dragon(d.species,d.stage)}</span><span><strong>${d.stage==='egg'?'Таємниче яйце':SPECIES[d.species].name}</strong><small>${d.stage==='egg'?'Ще не вилупилось':d.stage==='baby'?'Малюк':`Рівень ${d.level} · ${SPECIES[d.species].job}`}</small></span>${icon('arrow',18)}</button>`).join('')}</div>
+ <div class="recipe"><span class="eyebrow">МАЙСТЕРНЯ</span><h3>Оберіг мандрівника</h3><p>Кожен оберіг додає +1 уламок до майбутніх експедицій.</p><div class="recipe-cost">${cost({embers:2,ore:2})}</div>${button(`Створити оберіг · маєш ${state.crafted}`,'craft','primary',state.resources.embers<2||state.resources.ore<2)}</div>
+ <div class="recipe shrine-project"><span class="eyebrow">МЕТА ПЕРШОГО РОЗДІЛУ</span><h3>Серце долини</h3>${state.restored?`<p>Святилище відновлене. Четверте гніздо відкрите!</p>${button('Переглянути підсумок','completion','secondary')}`:`<p>Три дракони, стародавній оберіг і світло з руїн повернуть долині життя.</p><ul class="requirements"><li>${adults===3?'✓':'○'} Три дорослі види · ${adults}/3</li><li>${state.crafted?'✓':'○'} Створено оберіг</li><li>${state.expeditions?'✓':'○'} Завершено експедицію</li></ul><div class="recipe-cost">${cost({embers:4,ore:4,relics:6})}</div>${button('Відновити Серце долини','restore','primary',!canRestore)}`}</div>`;
+}
+function market(){return `${heading('КРАМНИЦЯ МАРИ','Добрі сусіди торгують','Мара збирає припаси для долини. Кожне замовлення обмежене.')}<div class="merchant"><span class="merchant-mark">${icon('market',30)}</span><div><strong>Мара · торговиця</strong><small>Бюджет: ${state.merchantBudget} ігрових монет</small></div></div><div class="cards">${state.orders.map(o=>`<article class="order"><div class="order-top"><span>${icon(resIcon[o.resource],24)}<strong>${o.quantity} · ${RESOURCE[o.resource]}</strong></span><b>+${o.pay} ${icon('coin',17)}</b></div><p>Залишилось замовлень: ${o.left} / 3</p>${button(o.left?'Виконати замовлення':'Замовлення закрите',`sell:${o.id}`,'secondary',!o.left||state.resources[o.resource]<o.quantity||state.merchantBudget<o.pay)}</article>`).join('')}</div>${button(`${icon('berry')} Купити 6 ягід ${cost({coins:20})}`,'buyFood','secondary',state.resources.coins<20)}<p class="disclosure">Локальна симуляція. Монети не мають грошової вартості. Гаманець і ончейн-ринок ще не підключені.</p>`;}
+function expedition(){
+ const now=Date.now(),p=phase(state),ex=state.expedition,adults=state.dragons.filter(d=>d.stage==='adult'),team=chosenTeam();
+ const arrived=ex&&now>=ex.ends;
+ return `${heading('ЗА МЕЖАМИ ТУМАНУ','Руїни коріння','Обери команду. Дракони вдома продовжать виробництво.')}<div class="ruins-art"><div class="ruin-door">${icon('relics',45)}</div><span>${ex?(arrived?'Команда чекає рішення':ex.delved?'У глибинному сховищі':'На шляху до брами'):p.red?'Прохід відкрито':'Прокинуться під час затемнення'}</span></div>
+ ${ex?`${!arrived?`<div class="stat-line"><span>${ex.delved?'До повернення':'До брами'}</span><b id="exp-timer">${time(ex.ends-now)}</b></div><div class="progress"><i style="width:${Math.min(100,100*(1-(ex.ends-now)/ex.duration))}%"></i></div>`:''}<div class="exp-facts"><div><small>Команда</small><strong>${ex.team.map(id=>SPECIES[state.dragons.find(d=>d.id===id).species].name).join(', ')}</strong></div><div><small>У рюкзаку</small><strong>${ex.reward} уламків + 15 монет</strong></div></div>${arrived&&!ex.delved?`<div class="encounter"><span class="eyebrow">ЗНАХІДКА · ЗАПЕЧАТАНА БРАМА</span><h3>Повернутись чи піти далі?</h3><p>Відкрий сховище за 2 жарокамені та 2 руди. Ще 10 секунд дадуть +3 уламки.</p>${button(`Відкрити сховище ${cost({embers:2,ore:2})}`,'delve','primary',state.resources.embers<2||state.resources.ore<2)}</div>`:''}${button(arrived?'Повернутись і забрати здобич':'Команда в дорозі…','claim',arrived&&!ex.delved?'secondary':'primary',!arrived)}<p class="hint">Зміна фази не перерве експедицію. Дракони відновлять роботу після повернення.</p>`:
+ `<div class="team-list">${adults.length?adults.map(d=>`<button class="team-choice ${team.includes(d.id)?'chosen':''}" data-team="${d.id}" aria-pressed="${team.includes(d.id)}"><span class="team-check">${team.includes(d.id)?icon('check',16):icon('plus',16)}</span><span><strong>${SPECIES[d.species].name}</strong><small>${team.includes(d.id)?'Йде до руїн':'Залишається працювати'}</small></span></button>`).join(''):'<p class="hint">Спочатку вирости хоча б одного дракона.</p>'}</div><p class="hint">Для глибшого проходу візьми 2 жарокамені та 2 руди. Без них можна повернутися з базовою здобиччю.</p><div class="exp-facts"><div><small>Команда</small><strong>${team.length} / ${adults.length} дорослих</strong></div><div><small>До першого рішення</small><strong>20 секунд</strong></div><div><small>Базова здобич</small><strong>${2+state.crafted+Math.min(team.length,3)} уламків + 15 монет</strong></div></div>${button(`${icon('compass')} Вирушити ${cost({berries:3})}`,'expedition','primary',!p.red||!team.length||state.resources.berries<3)}`}
+ <button class="demo-toggle" data-action="demoPhase">${icon(p.red?'sun':'moon',17)} Демо: ${p.red?'повернути світло':'викликати затемнення'}</button><p class="disclosure">Ігровий таймер. Ціна NEAR не підключена. Нагороди локальні, без реальних коштів.</p>`;
+}
+function render(persist=false){
+ tick(state);
+ const p=phase(state),now=Date.now();
+ document.body.classList.toggle('eclipse',p.red);document.body.classList.toggle('established',state.dragons.filter(d=>d.stage==='adult').length>=3);
+ document.querySelector('#balances').innerHTML=Object.entries(state.resources).map(([k,n])=>`<div class="balance" title="${RESOURCE[k]}"><span class="${k}">${icon(resIcon[k],21)}</span><div><small>${RESOURCE[k]}</small><b>${n}</b></div></div>`).join('');
+ document.querySelector('#phase-badge').innerHTML=`${icon(p.red?'moon':'sun',26)}<span><strong>${p.red?'Затемнення':'Час розквіту'}</strong><small>${p.red?'Руїни відкриті':'Притулок росте'} · <b id="phase-timer">${time(p.left)}</b></small></span>`;
+ renderWorld();
+ const forage=document.querySelector('#forage-node');forage.disabled=now<state.forageAt;forage.innerHTML=`<span class="forage-art">${icon('berry',30)}</span><span>Лісові ягоди<small id="forage-timer">${now<state.forageAt?time(state.forageAt-now):'+3 · зібрати'}</small></span>`;
+ document.querySelector('#shrine-node').classList.toggle('restored',state.restored);
+ document.querySelector('#shrine-node').innerHTML=`<span class="shrine-gem">${icon('relics',37)}</span><span class="shrine-plinth"></span><small>${state.restored?'Серце пробуджене':'Серце долини'}</small>`;
+ const goal=objective(state);
+ document.querySelector('#objective').innerHTML=`<span class="quest-seal">${icon(state.restored?'check':'leaf',22)}</span><span><span class="eyebrow">РОЗДІЛ 1 · ${goal.step}/7</span><strong>${goal.title}</strong><span class="goal-copy">${goal.text}</span></span><span class="goal-arrow">${icon('arrow',18)}</span>`;
+ const inspector=document.querySelector('#inspector'),scroll=inspector.scrollTop;
+ const focused=document.activeElement?.closest('#inspector button')?.dataset.action;
+ inspector.innerHTML=(tab==='home'?detail():tab==='eggs'?eggShop():tab==='collection'?collection():tab==='market'?market():expedition())+`<div class="panel-foot">${icon('leaf',14)} Механіки · тимчасове оформлення</div>`;
+ inspector.scrollTop=scroll;
+ if(focused){const replacement=[...inspector.querySelectorAll('button')].find(b=>b.dataset.action===focused);replacement?.focus({preventScroll:true});}
+ document.querySelectorAll('.bottom-nav [data-tab]').forEach(b=>{b.classList.toggle('active',b.dataset.tab===tab);b.setAttribute('aria-current',b.dataset.tab===tab?'page':'false');});
+ lastSignature=signature();if(persist)save();
+}
+function signature(){
+ const now=Date.now();return JSON.stringify([tab,selected,state.resources,state.dragons.map(d=>[d.id,d.stage,d.feeds,d.level,d.ready,now>=d.hatchAt]),state.slots,state.crafted,state.trades,state.collected,state.restored,now>=state.forageAt,state.orders,state.expedition,state.expedition&&now>=state.expedition.ends,phase(state).red,teamIds]);
+}
+root.addEventListener('click',e=>{
+ const b=e.target.closest('button');if(!b||b.disabled)return;
+ if(b.dataset.tab){tab=b.dataset.tab;render();revealPanel();return;}
+ if(b.dataset.select){selected=+b.dataset.select;tab='home';render();revealPanel();return;}
+ if(b.dataset.team){const id=+b.dataset.team,current=chosenTeam();teamIds=current.includes(id)?current.filter(x=>x!==id):[...current,id];render();return;}
+ const a=b.dataset.action;if(!a)return;
+ if(a==='goal'){const goal=objective(state);tab=goal.tab;selected=goal.id??selected;render();revealPanel();return;}
+ if(['help','phaseHelp','expandView','completion','resetView'].includes(a)){showModal(a);return;}
+ if(a==='close'){document.querySelector('#dialog').close();return;}
+ if(a==='resetConfirm'){state=createState();selected=1;teamIds=null;tab='home';save();document.querySelector('#dialog').close();render();toast('Нова демо-сесія. Перше яйце вже чекає.');return;}
+ try{
+  try{const latest=JSON.parse(localStorage.getItem(KEY));if(latest)state=hydrate(latest);}catch{}
+  const [type,value]=a.split(':');
+  const action={type:type==='barter'?'buyEgg':type,id:type==='sell'?+value:selected};
+  if(type==='buyEgg'||type==='barter'){action.species=value;action.payment=type==='barter'?'berries':'coins';}
+  if(type==='expedition')action.team=chosenTeam();
+  const msg=act(state,action);
+  if(type==='buyEgg'||type==='barter'){selected=state.dragons.at(-1).id;tab='home';}
+  render(true);
+  if(['hatch','feed','collect','claim','forage','restore'].includes(type))burst();
+  if(type==='expand')document.querySelector('#dialog').close();
+  if(type==='buyEgg'||type==='barter')revealPanel();
+  toast(msg);
+  if(type==='restore')showModal('completion');
+ }catch(err){render();toast(err.message);}
+});
+function burst(){
+ const n=document.querySelector('.nest.selected')||document.querySelector('.objective');if(!n)return;
+ for(let i=0;i<9;i++){const dot=document.createElement('i');dot.className='reward-spark';dot.style.setProperty('--dx',`${Math.cos(i*2.4)*75}px`);dot.style.setProperty('--dy',`${-30-Math.random()*60}px`);n.append(dot);setTimeout(()=>dot.remove(),1000);}
+}
+function revealPanel(){const panel=document.querySelector('#inspector');panel.scrollTop=0;if(matchMedia('(max-width:760px)').matches)panel.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth',block:'start'});}
+function showModal(type){
+ const dialog=document.querySelector('#dialog');
+ let text;
+ if(type==='phaseHelp')text=`${heading('ДИХАННЯ ДОЛИНИ','Світ має два обличчя','За світла вирощуй драконів і готуй припаси. Під час затемнення відкриваються руїни.')}<p>Фаза змінюється кожні 2 хвилини. Виробництво вдома продовжується в обох фазах. Запущена експедиція завжди може повернутись.</p><p class="disclosure">Це локальна модель. У вкладці «Експедиції» є позначений демоперемикач. Ціна NEAR поки не підключена.</p>`;
+ else if(type==='expandView')text=state.restored?`${heading('ЗА ТУМАНОМ','Ще одне гніздо','Відкрий п’яту ділянку для нового мешканця.')}<p>Потрібно ${cost({coins:45,ore:2})}</p>${button('Відкрити ділянку','expand','primary',state.slots>=5||state.resources.coins<45||state.resources.ore<2)}`:`${heading('ЗА ТУМАНОМ','Пробуди Серце долини','Відновлення святилища безкоштовно відкриє четверте гніздо.')}<p>Вирости три види, створи оберіг та принеси світло з руїн. Проєкт є у вкладці «Дракони».</p><button class="action primary" data-tab="collection" data-close-dialog>Перейти до святилища</button>`;
+ else if(type==='completion')text=`<div class="completion-seal">${icon('relics',48)}</div>${heading('РОЗДІЛ 1 ЗАВЕРШЕНО','Долина знову дихає','Ти виростив трьох різних драконів і повернув світло з руїн.')}<div class="completion-stats"><span><b>${state.dragons.length}</b> мешканців</span><span><b>${state.trades}</b> замовлень</span><span><b>${state.expeditions}</b> експедицій</span></div><p>Четверте гніздо відкрите. Можна продовжити вирощування або почати нове проходження через довідку.</p>${button('Повернутися до притулку','close','primary')}<p class="disclosure">Це кінець першого функціонального зрізу. Наступні розділи ще не реалізовані.</p>`;
+ else if(type==='resetView')text=`${heading('НОВЕ ПРОХОДЖЕННЯ','Почати демо заново?','Поточний локальний прогрес цієї демо-сесії буде замінено новим яйцем.')}<p>Інші проєкти та окремі тестові сесії не зміняться.</p>${button('Так, почати нове демо','resetConfirm','primary')}${button('Залишити поточний прогрес','close','secondary')}`;
+ else text=`${heading('ЯК ГРАТИ','Від яйця до живої долини','Натискай підказку «Розділ 1» — вона веде до наступної потрібної дії.')}<ol><li>Вилупи яйце та нагодуй малюка тричі.</li><li>Збирай ресурси. Лісові ягоди завжди доступні безкоштовно раз на 20 с.</li><li>Виконай замовлення Мари. Запроси вогняний і кам’яний види за монети або ягоди.</li><li>Створи оберіг із жарокаменю та руди.</li><li>У затемненні обери команду. Біля брами повернись або витрать ресурси для глибшого шляху.</li><li>Віднови Серце долини: 4 жарокамені, 4 руди та 6 уламків.</li></ol><p class="disclosure">Тимчасовий дизайн і назва. Локальний прототип без реальних коштів, NFT та гаманця.</p>${button('Почати нове демо','resetView','secondary')}`;
+ dialog.innerHTML=`<button class="dialog-close utility" data-action="close" aria-label="Закрити">${icon('close')}</button>${text}`;
+ if(!dialog.open)dialog.showModal();
+ dialog.querySelector('[data-close-dialog]')?.addEventListener('click',()=>dialog.close(),{once:true});
+}
+setInterval(()=>{
+ tick(state);
+ if(signature()!==lastSignature){render();return;}
+ const now=Date.now(),p=phase(state);document.querySelector('#phase-timer').textContent=time(p.left);
+ document.querySelector('#forage-timer').textContent=now<state.forageAt?time(state.forageAt-now):'+3 · зібрати';
+ const hint=document.querySelector('#forage-hint');if(hint)hint.textContent=now<state.forageAt?`Наступні безкоштовні ягоди: ${time(state.forageAt-now)}`:'Безкоштовний збір раз на 20 с. Ягоди вже дозріли.';
+ const d=state.dragons.find(d=>d.id===selected);
+ if(tab==='home'&&d){
+  if(d.stage==='egg'){document.querySelector('#hatch-timer').textContent=time(d.hatchAt-now);const bar=document.querySelector('.inspector .progress i');if(bar)bar.style.width=`${Math.min(100,100*(1-(d.hatchAt-now)/HATCH_MS))}%`;}
+  if(d.stage==='adult'&&!d.ready&&!state.expedition?.team.includes(d.id)){document.querySelector('#production-timer').textContent=time(d.next-now);const bar=document.querySelector('.inspector .progress i');if(bar)bar.style.width=`${Math.max(0,100*(1-(d.next-now)/(SPECIES[d.species].cycle*1000)))}%`;}
+ }
+ if(tab==='expedition'&&state.expedition&&now<state.expedition.ends){document.querySelector('#exp-timer').textContent=time(state.expedition.ends-now);document.querySelector('.inspector .progress i').style.width=`${Math.min(100,100*(1-(state.expedition.ends-now)/state.expedition.duration))}%`;}
+ if(now>noticeUntil)document.querySelector('#toast')?.classList.remove('visible');
+},500);
+window.addEventListener('storage',e=>{if(e.key!==KEY||!e.newValue)return;try{state=hydrate(JSON.parse(e.newValue));render();}catch{}});
+mainShell();
+try{if(!localStorage.getItem(KEY))save();}catch{}

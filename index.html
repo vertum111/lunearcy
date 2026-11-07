@@ -1,0 +1,21 @@
+<!doctype html><html lang="uk"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#102f32"><title>Lunearcy — Драконяча долина</title><link rel="icon" href="/brand/lunearcy-icon-64.png" type="image/png"><link rel="apple-touch-icon" href="/brand/lunearcy-icon-192.png"><meta name="description" content="Raise dragons. Wake the valley. An illustrated fantasy browser game."><meta property="og:title" content="Lunearcy — Raise dragons. Wake the valley."><meta property="og:description" content="Grow your dragon sanctuary, trade with neighbours and explore a changing valley."><meta property="og:type" content="website"><meta property="og:image" content="/brand/hatchglen-og.png"><link rel="manifest" href="/manifest.webmanifest">
+<link rel="preload" href="/brand/lunearcy-mark.svg" as="image">
+<style>
+/* Loader: drawn before any script, so the first thing on screen is the spinning Lunearcy mark. The ring is the real progress. */
+html,body{background:#0b2427}
+#loader{position:fixed;inset:0;z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:radial-gradient(ellipse at 50% 42%,#1a4a49 0,#0f3134 45%,#081c1f 100%);color:#eef4df;font-family:Nunito,ui-rounded,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;transition:opacity .6s ease,visibility .6s}
+#loader.done{opacity:0;visibility:hidden}
+.ld-mark{position:relative;width:min(180px,42vw);aspect-ratio:1}
+.ld-mark img{position:absolute;inset:16%;width:68%;height:68%;filter:drop-shadow(0 0 22px #8ff0dc66);animation:ld-spin 2.6s cubic-bezier(.55,.1,.45,.9) infinite}
+.ld-ring{position:absolute;inset:0;width:100%;height:100%;rotate:-90deg}
+.ld-ring circle{fill:none;stroke-width:4;stroke-linecap:round}
+.ld-track{stroke:#ffffff1f}
+.ld-bar{stroke:#8ff0dc;stroke-dasharray:100;stroke-dashoffset:100;transition:stroke-dashoffset .35s ease;filter:drop-shadow(0 0 6px #8ff0dc)}
+.ld-name{font-size:clamp(26px,4vw,38px);font-weight:900;letter-spacing:-.5px;color:#f3f1d8}
+.ld-text{display:flex;gap:10px;font-size:15px;font-weight:700;color:#b9d6cb}
+.ld-pct{min-width:4ch;color:#8ff0dc;font-variant-numeric:tabular-nums}
+@keyframes ld-spin{to{rotate:360deg}}
+@media (prefers-reduced-motion: reduce){.ld-mark img{animation:ld-pulse 2s ease-in-out infinite}@keyframes ld-pulse{50%{opacity:.6}}}
+</style></head><body><div id="loader" role="status" aria-live="polite"><div class="ld-mark"><svg class="ld-ring" viewBox="0 0 120 120" aria-hidden="true"><circle class="ld-track" cx="60" cy="60" r="56"/><circle class="ld-bar" cx="60" cy="60" r="56" pathLength="100"/></svg><img src="/brand/lunearcy-mark.svg" alt=""></div><strong class="ld-name">Lunearcy</strong><span class="ld-text"><span class="ld-label">Завантажуємо долину…</span><b class="ld-pct" aria-hidden="true">0%</b></span></div>
+<script>try{var l=localStorage.getItem('hatchglen-lang')||((navigator.language||'').toLowerCase().indexOf('uk')===0?'uk':'en');if(l==='en')document.querySelector('.ld-label').textContent='Loading the valley…';}catch(e){}</script>
+<div id="app"></div><script type="module" src="/src/main.js"></script></body></html>

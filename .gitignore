@@ -1,0 +1,12 @@
+.local/
+node_modules/
+dist/
+contracts/market/target/
+.DS_Store
+contracts/*/target/
+releases/*.zip
+art-source/
+releases/
+*.log
+.env
+.env.*

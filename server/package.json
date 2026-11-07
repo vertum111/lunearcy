@@ -1,0 +1,9 @@
+{
+  "name": "lunearcy-sponsor",
+  "private": true,
+  "type": "module",
+  "description": "Pays Lunearcy players' testnet gas so they never see a wallet prompt.",
+  "scripts": { "start": "node relayer.mjs" },
+  "engines": { "node": ">=22" },
+  "dependencies": { "near-api-js": "7.4.0" }
+}

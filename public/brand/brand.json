@@ -1,0 +1,21 @@
+{
+  "name": "Hatchglen",
+  "tagline": "Raise dragons. Wake the valley.",
+  "palette": {
+    "ink": "#173B35",
+    "forest": "#2B6654",
+    "moss": "#A6C96A",
+    "ivory": "#EEF0D5",
+    "coral": "#C85D4A",
+    "eclipse": "#542A3B",
+    "mist": "#74AC9B"
+  },
+  "logo": {
+    "primary": "hatchglen-logo-dark.svg",
+    "onLight": "hatchglen-logo-light.svg",
+    "symbol": "hatchglen-symbol.svg",
+    "avatar": "hatchglen-avatar.svg",
+    "favicon": "hatchglen-favicon.svg"
+  },
+  "status": "Internal production candidate, not trademark-cleared"
+}

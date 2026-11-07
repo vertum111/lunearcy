@@ -1,0 +1,73 @@
+/* ===== Storybook parchment theme (UI concept A) =====
+   Paper surfaces for every panel and tag, carved wood for navigation, brown ink for text,
+   a wax seal for the chapter. Loaded after skin.css so it only overrides. */
+:root{
+ --paper:url(/art/ui/parchment.webp);--wood:url(/art/ui/wood.webp);
+ --ink:#3b2a1a;--ink-soft:#7a6346;--ink-line:#5a3d22;--paper-base:#f5ead0;--paper-card:#efe1bf;
+ --ui-bg:#f5ead0;--ui-card:#efe1bf;--ui-card-hi:#f7ecd2;--ui-edge:#6b4a2a;--ui-edge-soft:#8a6a4566;
+ --ui-mint:#4f8f3a;--ui-mint-soft:#5f9a45;--ui-ink:#fffaf0;--ui-text:#3b2a1a;--ui-muted:#7a6346;
+ --ui-warn:#b4432e;--ui-gold:#a86d10;--ui-shadow:0 10px 26px #2a170866
+}
+/* paper surfaces */
+.balance,.hud .phase,.hud .icon-button,.chapter>button,.inspector,dialog,.tutorial,.lira-tip,#toast,#phase-event,
+.sanctuary-world .sw-harvest,.sanctuary-world .sw-nest-caption,.sanctuary-world .sw-location-label,.sanctuary-world .sw-away-chip,.sanctuary-world .sw-timer{
+ background:var(--paper) center/256px,var(--paper-base)!important;color:var(--ink)!important;border:2.5px solid var(--ink-line)!important;box-shadow:0 6px 16px #2a170855,inset 0 0 0 2px #fff8e855!important;backdrop-filter:none!important}
+.inspector,dialog{border-width:3px!important;box-shadow:0 18px 40px #2a170877,inset 0 0 40px #b8925a33!important}
+.inspector::before,.inspector::after,dialog::before,dialog::after{display:none!important}
+/* inner cards */
+.trade-row,.species-card,.project,.location-card,.goal,.food-supply,.loop-step,.exp-facts>span,.team-choice,.collection-item,.beast,.merchant,
+.segmented,.upgrade-preview,.nest-target,.setting-row,.score-pill,.compact-stat,.selected-portrait,.ruins-window,.order,.away-loot>span,.completion-stats{
+ background:#efe1bfd9!important;border-color:#8a6a4580!important;color:var(--ink)!important}
+.location-card.selected,.team-choice.chosen{border-color:var(--ui-mint)!important;box-shadow:0 0 0 2px #4f8f3a55!important}
+/* ink text */
+.inspector,.inspector h2,.inspector h3,dialog h2,dialog h3,.tutorial h3,.chapter strong,.balance b,.trade-good strong,.species-card h3,.beast h3,.goal h3,.panel-heading h2,.selected-title h2{color:var(--ink)!important;text-shadow:none!important}
+.kicker,.inspector .kicker,.chapter small,.tutorial .kicker{color:#9a5a24!important}
+.inspector p,.inspector small,.subtle,.balance small,.mara-says,.trade-good small,.trade-trend small,.makes,.dragon-job,dialog p,.tutorial p,.lira-tip p,.help-list,.keep-note{color:var(--ink-soft)!important}
+.mara-says{color:#6b4a2a!important}
+.why,.cost.short,.lira-tip p b,.near-error{color:var(--ui-warn)!important}
+.lira-tip p b{color:#4f8f3a!important}
+.trade-price,.cost,.habitat-bonus,.loot{color:#8a5a10!important}
+.inspector a{color:#3f6f2a}
+/* buttons */
+.button.primary{background:linear-gradient(#86bd5a,#4f8f3a)!important;color:#fffaf0!important;border:2.5px solid #2f4f22!important;box-shadow:0 4px 0 #2f4f22,inset 0 2px 0 #c8f09a88!important;text-shadow:0 1px 0 #2f4f22}
+.button.primary .cost{color:#fff3c8!important}
+.button.secondary,.button.small:not(.primary){background:var(--wood) center/200px,#a06a3a!important;color:#fff5e0!important;border:2.5px solid #4a2f18!important;box-shadow:0 4px 0 #4a2f18!important;text-shadow:0 1px 1px #2a1708}
+.button.secondary .cost{color:#ffe7a0!important}
+.button.ghost,.button.text-button{background:transparent!important;color:#6b4a2a!important;border-color:#8a6a45!important;box-shadow:none!important}
+.button:disabled,.button[disabled]{filter:grayscale(.65) brightness(.95);opacity:.7}
+.close-panel,.guide-close{background:var(--wood) center/120px,#a06a3a!important;color:#fff5e0!important;border:2px solid #4a2f18!important}
+/* bottom navigation: carved wooden planks */
+.nav button{background:var(--wood) center/220px,#a06a3a!important;border:3px solid #4a2f18!important;border-radius:14px!important;color:#fff5e0!important;box-shadow:0 5px 0 #4a2f18,inset 0 2px 0 #ffd9a055!important;text-shadow:0 1px 2px #2a1708}
+.nav button span{color:#fff5e0!important}
+.nav button .nav-glyph{color:#fff1d0!important;filter:drop-shadow(0 2px 0 #4a2f18)}
+.nav button.active{filter:brightness(1.12) saturate(1.1);translate:0 -3px;box-shadow:0 8px 0 #4a2f18,0 0 0 3px #ffe7a0,inset 0 2px 0 #ffd9a088!important}
+/* chapter card: a parchment scroll with a red wax seal */
+.chapter>button{border-radius:10px!important}
+.chapter-progress{background:radial-gradient(circle at 35% 30%,#d9534a,#a4262a 60%,#7a1418)!important;color:#ffe9d0!important;border:none!important;box-shadow:0 3px 0 #5a0f12,inset 0 -3px 6px #5a0f1288!important;border-radius:46% 54% 50% 50%/52% 48% 52% 48%!important}
+.chapter-progress small{color:#ffd6c0!important}
+.quest-bar{background:#d9c49a!important}.quest-bar i{background:linear-gradient(90deg,#86bd5a,#4f8f3a)!important}
+/* meters, tabs, badges */
+.meter{background:#d9c49a!important;border-color:#8a6a45!important}
+.meter i{background:linear-gradient(#86bd5a,#4f8f3a)!important}
+.segmented button{color:var(--ink-soft)!important}
+.segmented button.on{background:var(--wood) center/200px,#a06a3a!important;color:#fff5e0!important;border-color:#4a2f18!important}
+.score-pill b,.completion-stats b{color:#8a5a10!important}
+/* map tags */
+.sanctuary-world .sw-harvest{border-radius:999px!important}
+.sanctuary-world .sw-harvest b,.sanctuary-world .sw-nest-caption strong,.sanctuary-world .sw-location-label strong{color:var(--ink)!important}
+.sanctuary-world .sw-nest-caption small,.sanctuary-world .sw-location-label small,.sanctuary-world .sw-timer small{color:var(--ink-soft)!important}
+.sanctuary-world .sw-chip{background:var(--paper) center/120px,var(--paper-base)!important;color:#5a3d22!important;border:2.5px solid var(--ink-line)!important}
+/* the HUD gear and phase */
+.hud .icon-button svg,.hud .phase{color:var(--ink)!important}
+.phase-text small{color:var(--ink-soft)!important}
+/* toast kinds */
+#toast.error{border-color:#b4432e!important}#toast.info{border-color:#4f8f3a!important}
+.spark polyline{stroke:#6b5a3a}.spark circle{fill:#6b5a3a}
+.spark.up polyline{stroke:#3f7d2a}.spark.up circle{fill:#3f7d2a}
+.spark.down polyline{stroke:#b4432e}.spark.down circle{fill:#b4432e}
+.inspector strong:not(.button strong),dialog strong,.location-name strong,.location-name,.collection-item strong,.team-choice strong,.merchant strong,.goal-reward,.requirements li,.chapter-checklist li{color:var(--ink)!important}
+.location-name svg,.location-name small{color:var(--ink-soft)!important}
+.owned{color:#3f7d2a!important}.locked-species{color:var(--ink-soft)!important}
+.goal small,.phase-hint,.team-hint{color:var(--ink-soft)!important}
+dialog small,.loop-step small,.inspector small:not(.button small),.lira-tip small{color:var(--ink-soft)!important}
+.loop-step b{color:var(--ink)!important}

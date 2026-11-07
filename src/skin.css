@@ -1,0 +1,630 @@
+/* Hatchglen UI v4 — "world first, one action = one tap".
+   Loaded after game.css and overrides its HUD and panel layout.
+   Sizes: body text ≥14px (never below 12px), tap targets ≥44px, primary actions 52px+. */
+:root{
+ --ui-bg:#0c2a2df2;--ui-card:#123a3c;--ui-card-hi:#18494a;--ui-edge:#2b6d6b;--ui-edge-soft:#2b6d6b88;
+ --ui-mint:#8ff0dc;--ui-mint-soft:#a6e9da;--ui-ink:#0f3134;--ui-text:#f0faf4;--ui-muted:#a9d0c5;
+ --ui-warn:#ffb6a4;--ui-gold:#ffd77a;--ui-radius:18px;--ui-shadow:0 14px 40px #04141788
+}
+.screen-vignette{background:linear-gradient(#08202666,transparent 16%,transparent 80%,#08202677)}
+.eclipse .screen-vignette{background:linear-gradient(#2a070f80,transparent 18%,transparent 78%,#1e060c88)}
+
+/* ---------- Top HUD: resource capsules (left), phase + settings (right) ---------- */
+.hud{left:20px;right:20px;top:16px;align-items:flex-start;gap:12px}
+.brand-button{display:none}
+.balances{order:-1;flex-direction:row;flex-wrap:wrap;gap:8px;margin:0;padding:0;border:0;background:none;backdrop-filter:none;box-shadow:none}
+.balance{gap:8px;min-width:0;padding:5px 16px 5px 6px;border-radius:999px;background:var(--ui-bg);border:2px solid var(--ui-edge-soft);box-shadow:0 4px 14px #04141766;cursor:help}
+.balance .gem{display:block;width:32px;height:32px;filter:drop-shadow(0 2px 3px #06171a88)}
+.balance b{font-size:21px;font-weight:900;color:#fff;min-width:1.4em}
+.balance small{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.balance-delta{left:40px;top:-6px;font-size:20px}
+.hud-tools{margin-left:auto;gap:10px}
+.phase{display:flex;align-items:center;gap:10px;background:var(--ui-bg);border:2px solid var(--ui-edge-soft);border-radius:999px;padding:6px 16px 6px 8px;min-height:50px;color:var(--ui-text)}
+.phase-glyph{display:block;width:34px;height:34px;filter:drop-shadow(0 0 8px #ffe38a88)}
+.eclipse .phase-glyph{filter:drop-shadow(0 0 10px #ff3b2acc)}
+.phase-dots{display:flex;gap:6px}
+.phase-dots i{width:9px;height:9px;border-radius:50%;background:#5f7d86}
+.phase-dots i.on{background:#f5c845;box-shadow:0 0 6px #f5c84599}
+.eclipse .phase-dots i.on{background:#ff5a3c;box-shadow:0 0 6px #ff5a3c99}
+.phase-text{display:flex;flex-direction:column;font-size:13px;font-weight:800;line-height:1.1;color:var(--ui-text)}
+.phase-text small{font-size:13px;margin:2px 0 0;color:var(--ui-muted);font-weight:800}
+.hud .icon-button{width:50px;height:50px;border-radius:50%;border:2px solid var(--ui-edge-soft);background:var(--ui-bg);color:var(--ui-text)}
+.hud .icon-button svg{width:26px;height:26px;stroke-width:2}
+.hud .icon-button:hover{background:var(--ui-card-hi)}
+
+/* ---------- Quest card (chapter goal) ---------- */
+.chapter{left:20px;top:76px;transform:none;max-width:330px}
+.chapter>button{display:flex;align-items:center;gap:12px;width:100%;background:var(--ui-bg);border:2px solid var(--ui-edge);border-radius:var(--ui-radius);padding:10px 14px 10px 10px;box-shadow:var(--ui-shadow);flex-wrap:wrap;position:relative}
+.chapter>button:hover{background:var(--ui-card-hi)}
+.chapter-progress{width:44px;height:44px;border:0;background:var(--ui-mint);color:var(--ui-ink);font-size:20px;font-weight:900}
+.chapter-progress small{font-size:7px}
+.chapter small{font-size:12px;color:var(--ui-muted);font-weight:700}
+.chapter strong{font-size:16px;color:var(--ui-text);margin-top:2px;line-height:1.25}
+.chapter>button>svg{width:22px;height:22px;color:var(--ui-mint)}
+.quest-bar{position:absolute;left:66px;right:44px;bottom:8px;height:5px;border-radius:5px;background:#06191c}
+.quest-bar i{display:block;height:100%;border-radius:5px;background:var(--ui-mint)}
+
+/* ---------- Bottom navigation: icon + label, badges ---------- */
+.nav{bottom:16px;gap:10px}
+.nav button{width:92px;height:84px;min-height:84px;padding:8px 4px 6px;gap:4px;border:2px solid var(--ui-edge);border-radius:18px;background:var(--ui-bg);color:var(--ui-mint-soft);box-shadow:0 4px 0 #071d20,0 10px 26px #06171a66}
+.nav button:hover{background:var(--ui-card-hi);color:#c8fbef}
+.nav button .nav-glyph{width:34px;height:34px}
+.nav button span{position:static;width:auto;height:auto;clip:auto;overflow:visible;font-size:13px;font-weight:800;color:var(--ui-muted)}
+.nav button.active{border:3px solid var(--ui-mint);background:#134142;color:var(--ui-mint);box-shadow:0 0 0 3px #8ff0dc22,0 0 22px #8ff0dc44,0 4px 0 #071d20}
+.nav button.active span{color:var(--ui-text)}
+.nav button>i{display:none;position:absolute;top:-9px;right:-9px;bottom:auto;left:auto;width:auto;min-width:26px;height:26px;padding:0 7px;border-radius:13px;background:#ff5a4e;color:#fff;font:900 14px/26px inherit;font-style:normal;border:2px solid #fff;box-shadow:0 3px 8px #0006}
+.nav button.has-badge>i{display:block;animation:badge-pop 2.4s ease-in-out infinite}
+.nav button.active.has-badge>i{animation:none}
+@keyframes badge-pop{0%,80%,100%{transform:scale(1)}88%{transform:scale(1.18)}}
+.nav button:focus-visible{outline:3px solid #fff;outline-offset:3px}
+
+/* ---------- Buttons, costs, "what's missing" ---------- */
+.inspector,.tutorial,dialog{font-size:15px}
+.button{min-height:48px;font-size:16px;font-weight:800;border-radius:12px;padding:10px 16px;gap:8px}
+.button.primary{background:var(--ui-mint);border:0;color:var(--ui-ink);font-weight:900;box-shadow:0 4px 0 #3f9c88}
+.button.primary:hover:not(:disabled){background:#b3fbe9}
+.button.primary:active:not(:disabled){transform:translateY(2px);box-shadow:0 2px 0 #3f9c88}
+.button.secondary{background:var(--ui-card-hi);border:2px solid var(--ui-edge);color:var(--ui-text)}
+.button.ghost{background:transparent;border:2px solid var(--ui-edge);color:var(--ui-mint-soft)}
+.button:disabled{background:#1a3537;border:2px dashed #3d6564;color:#88aaa3;box-shadow:none;cursor:not-allowed;opacity:1}
+.button.text-button{font-size:14px;min-height:40px;color:var(--ui-mint-soft)}
+.button.small{font-size:14px;min-height:42px}
+.cost{font-size:15px;font-weight:900;color:var(--ui-gold);gap:4px}
+.cost svg{width:18px;height:18px}
+.button.primary .cost{color:var(--ui-ink)}
+.cost.short{opacity:1;color:var(--ui-warn)}
+.button.primary .cost.short{color:#9a2f22}
+.act{display:flex;flex-direction:column;gap:6px;width:100%}
+.why{display:block;font-size:13px;font-weight:700;color:var(--ui-warn);text-align:center;line-height:1.3}
+
+/* ---------- Selected dragon card (bottom-right) ---------- */
+.inspector{background:var(--ui-bg);border:2px solid var(--ui-edge);border-radius:22px;box-shadow:var(--ui-shadow)}
+.inspector:before{display:none}
+.close-panel{width:44px;height:44px;min-width:44px;border-radius:50%;background:var(--ui-card-hi);border:2px solid var(--ui-edge);color:var(--ui-text);right:14px;top:14px}
+.close-panel svg{width:20px;height:20px}
+.inspector.compact{right:20px;bottom:16px;width:470px;padding:16px 18px;max-height:none;overflow:visible}
+.inspector.compact .selected-card{grid-template-columns:96px 1fr auto;grid-auto-flow:row dense;gap:4px 16px;align-items:center}
+.inspector.compact .selected-portrait{grid-row:1/span 6;width:96px;height:88px}
+.inspector.compact .selected-title{grid-column:2;padding:0}
+.inspector.compact .selected-title .kicker{display:block;font-size:11px;letter-spacing:.8px;color:var(--ui-muted)}
+.inspector.compact .selected-title h2{margin:2px 0 0;font-size:22px;font-weight:900;color:var(--ui-text)}
+.inspector.compact .selected-title .close-panel{right:-10px;top:-10px;width:36px;height:36px;min-width:36px}
+.inspector.compact .selected-controls{display:contents}
+.inspector.compact .selected-controls>*{grid-column:2;margin:2px 0}
+.inspector.compact .selected-controls>p{font-size:14px;color:var(--ui-muted);line-height:1.35}
+.inspector.compact .selected-controls .compact-stat{margin:2px 0;font-size:14px;color:var(--ui-muted)}
+.inspector.compact .selected-controls .compact-stat strong{font-size:15px;color:var(--ui-text)}
+.inspector.compact .selected-controls .meter{height:14px;border-radius:8px;background:#06191c;border:2px solid #23585a;margin:4px 0}
+.inspector.compact .selected-controls .meter i{background:linear-gradient(#b6f59a,#78d36f);border-radius:6px}
+.inspector.compact .selected-controls .feed-progress{margin:4px 0}
+.feed-progress>span{padding:6px;border-radius:9px}
+.feed-progress>small{font-size:14px;color:var(--ui-muted)}
+.inspector.compact .selected-controls .button:not(.text-button),.inspector.compact .selected-controls .act{grid-column:3;width:auto;min-width:150px;align-self:center}
+.inspector.compact .button.primary{white-space:nowrap;font-size:18px;min-height:56px;padding:10px 20px}
+.inspector.compact .selected-controls .text-button{justify-content:flex-start;white-space:nowrap;padding:0;min-height:30px}
+
+/* ---------- Full panels: centred modal on desktop, bottom sheet on phones ---------- */
+.panel-backdrop{position:absolute;inset:0;z-index:6;border:0;padding:0;background:#03111499;backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .25s}
+.eclipse .panel-backdrop{background:#16050a99}
+.game:has(.inspector.full-panel.open) .panel-backdrop{opacity:1;pointer-events:auto}
+.inspector.full-panel{position:absolute;z-index:9;inset:20px 0 120px 0;margin:auto;width:min(920px,calc(100% - 40px));height:fit-content;max-height:calc(100% - 140px);overflow:auto;padding:30px 34px 34px;border-radius:26px;transform:translateY(16px) scale(.98)}
+.inspector.full-panel.open{transform:none}
+.panel-heading{margin:0 0 22px;padding-right:56px}
+.panel-heading .kicker,.inspector .kicker{font-size:12px;letter-spacing:1.4px;color:var(--ui-mint-soft)}
+.panel-heading h2{font-size:32px;font-weight:900;color:var(--ui-text);margin:6px 0 8px}
+.panel-heading p{font-size:16px;line-height:1.5;color:var(--ui-muted)}
+.inspector h3{font-size:22px;font-weight:900;color:var(--ui-text)}
+.inspector p{font-size:15px;line-height:1.5;color:var(--ui-muted)}
+.subtle{font-size:14px;line-height:1.5;color:var(--ui-muted);margin-top:14px}
+.requirements{font-size:16px;line-height:1.9;color:var(--ui-text);margin:10px 0 14px}
+.food-supply,.project{margin-top:20px;padding:20px 22px;border:2px solid var(--ui-edge-soft);border-radius:var(--ui-radius);background:var(--ui-card)}
+.food-supply h3,.project h3{font-size:22px;margin:4px 0 8px}
+.food-supply p,.project p{font-size:15px;color:var(--ui-muted);margin-bottom:12px}
+.food-supply{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px}
+.food-supply h3,.food-supply p{grid-column:1/-1;margin-bottom:0}
+
+/* Eggs: three big species cards */
+.species-list{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.species-card{display:flex;flex-direction:column;gap:8px;padding:16px;border:2px solid var(--ui-edge-soft);border-radius:var(--ui-radius);background:var(--ui-card);text-align:center}
+.species-card>div:last-child{display:flex;flex-direction:column;gap:8px;flex:1}
+.species-art{height:150px;margin:0}
+.species-card .kicker{font-size:12px}
+.species-card h3{font-size:24px;margin:0}
+.species-card p{font-size:15px;color:var(--ui-muted);margin:0 0 6px;flex:1}
+.species-card .button{font-size:16px;min-height:50px;padding:10px}
+.owned{font-size:15px;font-weight:800;color:var(--ui-mint);margin-top:auto;padding:14px 0}
+
+/* Market: Mara + order tiles */
+.merchant{gap:16px;border:0;padding:0;margin-bottom:10px}
+.merchant>span{width:72px;height:72px;background:var(--ui-card-hi);border:2px solid var(--ui-edge)}
+.merchant>span img{width:62px;height:62px}
+.merchant strong{font-size:20px;color:var(--ui-text)}
+.merchant small{font-size:15px;color:var(--ui-muted);margin-top:4px}
+.merchant-quote{font-size:16px;font-style:italic;color:var(--ui-text);margin:0 0 16px}
+.orders{grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;margin-bottom:16px}
+.order{display:flex;flex-direction:column;gap:10px;padding:16px;border:2px solid var(--ui-edge-soft);border-radius:var(--ui-radius);background:var(--ui-card)}
+.order-heading strong{font-size:19px;color:var(--ui-text)}
+.order-heading>span svg{width:30px;height:30px;color:var(--ui-mint)}
+.order-heading b{font-size:20px;color:var(--ui-gold)}
+.order-heading b svg{width:20px;height:20px}
+.order p{font-size:14px;color:var(--ui-muted);margin:0}
+.order .button{font-size:17px;min-height:50px;margin-top:auto}
+
+/* Dragons: card grid */
+.collection-list{grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px}
+.collection-item{flex-direction:column;align-items:stretch;gap:6px;padding:12px 14px 14px;border:2px solid var(--ui-edge-soft);border-radius:var(--ui-radius);background:var(--ui-card);text-align:center;position:relative}
+.collection-item:hover{background:var(--ui-card-hi);border-color:var(--ui-edge)}
+.collection-item .thumb{width:100%;height:110px}
+.collection-item strong{font-size:18px;color:var(--ui-text)}
+.collection-item small{font-size:14px;color:var(--ui-muted);margin-top:2px}
+.collection-item>svg{position:absolute;top:12px;right:12px;width:18px;height:18px;color:var(--ui-mint)}
+
+/* Expedition: team cards + facts */
+.ruins-window{height:110px;border-radius:60px 60px 16px 16px;margin:0 0 16px}
+.ruins-window>small{font-size:15px;font-weight:800}
+.team-list{grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+.team-choice{flex-direction:column;align-items:stretch;gap:4px;padding:10px 12px 12px;border:2px solid var(--ui-edge-soft);border-radius:var(--ui-radius);background:var(--ui-card);text-align:center;position:relative}
+.team-choice.chosen{background:#1d5049;border:3px solid var(--ui-mint)}
+.team-choice .thumb{width:100%;height:90px}
+.team-choice strong{font-size:17px;color:var(--ui-text)}
+.team-choice small{font-size:13px;color:var(--ui-muted)}
+.team-choice>svg{position:absolute;top:10px;right:10px;width:22px;height:22px;color:var(--ui-mint)}
+.exp-facts{grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.exp-facts>span{flex-direction:column;justify-content:flex-start;gap:4px;padding:14px 16px;border-radius:14px;background:var(--ui-card);font-size:14px;color:var(--ui-muted)}
+.exp-facts strong{font-size:18px;color:var(--ui-text);max-width:none;text-align:left}
+.encounter{padding:18px;border-radius:var(--ui-radius)}
+.encounter h3{font-size:22px}
+.phase-hint{font-size:15px;padding:12px 14px;border-radius:12px}
+.compact-stat{font-size:15px}
+.compact-stat strong,.compact-stat b{font-size:16px}
+.meter{height:12px;border-radius:8px}
+
+/* Map of the valley: region cards */
+.location-list{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.location-card{display:flex;flex-direction:column;gap:10px;padding:16px;border:2px solid var(--ui-edge-soft);border-radius:var(--ui-radius);background:var(--ui-card)}
+.location-card.selected{border-color:var(--ui-mint)}
+.location-name{padding:0;gap:12px}
+.location-name>svg:first-child{width:30px;height:30px;color:var(--ui-mint)}
+.location-name strong{font-size:19px}
+.location-name small{font-size:14px;color:var(--ui-muted)}
+.location-card p{font-size:14px}
+.location-card .button{font-size:15px;min-height:46px}
+.habitat-bonus{color:var(--ui-mint-soft)!important}
+
+/* ---------- Tutorial guide (Lira) ---------- */
+.tutorial{left:20px;bottom:118px;width:400px;padding:20px 20px 18px 104px;border:2px solid var(--ui-mint);background:var(--ui-bg);border-radius:22px;box-shadow:0 0 0 6px #8ff0dc1a,var(--ui-shadow)}
+.tutorial .guide-avatar{width:110px;height:110px;left:-8px;top:8px}
+.tutorial .kicker{font-size:11px;letter-spacing:.8px;color:var(--ui-mint-soft)}
+.tutorial h3{font-size:20px;margin:6px 0 6px;color:var(--ui-text)}
+.tutorial p{font-size:15px;line-height:1.45;color:var(--ui-text)}
+.tutorial .button{margin-top:12px;font-size:16px;min-height:46px;justify-content:center;padding:8px 16px;background:var(--ui-mint);color:var(--ui-ink);border-radius:12px;border:0;box-shadow:0 4px 0 #3f9c88;width:auto}
+.guide-close{width:36px;height:36px;right:8px;top:8px;color:var(--ui-muted)}
+.tutorial-focus{outline:4px solid #fff7b0!important;outline-offset:6px}
+
+/* ---------- Feedback & dialogs ---------- */
+#toast{font-size:16px;font-weight:800;padding:14px 22px;border-radius:999px;top:84px;box-shadow:var(--ui-shadow)}
+#phase-event>span{font-size:26px}
+#phase-event small{font-size:15px}
+dialog{background:var(--ui-bg);border:2px solid var(--ui-edge);border-radius:26px;color:var(--ui-text);width:min(560px,calc(100% - 30px))}
+dialog p{font-size:15px;color:var(--ui-muted)}
+dialog h3{font-size:20px}
+dialog .subtle{font-size:13px}
+
+/* Camera + status */
+.camera-tools{bottom:20px;left:20px}
+.camera-tools>button{width:46px;height:46px;min-width:46px;background:var(--ui-bg);border:2px solid var(--ui-edge-soft);color:var(--ui-mint-soft);border-radius:14px}
+.camera-tools small{display:none}
+.status-label{bottom:4px;left:20px;opacity:.6}
+.game:has(.inspector.full-panel.open) .tutorial,.game:has(.inspector.compact.open) .camera-tools{display:none}
+
+/* ---------- Mid widths ---------- */
+@media(max-width:1150px){
+ .nav button{width:78px;height:74px;min-height:74px}
+ .nav button span{font-size:12px}
+ .inspector.compact{width:420px;bottom:104px}
+ .species-list,.location-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-height:700px) and (min-width:761px){
+ .chapter{display:none}
+ .inspector.full-panel{inset:12px 0 100px 0;max-height:calc(100% - 112px)}
+}
+
+/* ---------- Phones: compact HUD, bottom sheets ---------- */
+@media(max-width:760px){
+ .hud{left:10px;right:10px;top:max(8px,env(safe-area-inset-top));display:flex}
+ .balances{gap:5px;max-width:calc(100% - 108px)}
+ .balance{padding:3px 10px 3px 3px;gap:4px;border-width:1.5px}
+ .balance .gem{width:24px;height:24px}
+ .balance b{font-size:16px}
+ .hud-tools{gap:6px}
+ .phase{padding:4px 10px 4px 4px;min-height:40px;gap:6px}
+ .phase-glyph{width:28px;height:28px}
+ .phase-dots{display:none}
+ .phase-text{font-size:0}
+ .phase-text small{font-size:13px;margin:0}
+ .hud .icon-button{width:40px;height:40px}
+ .hud .icon-button svg{width:22px;height:22px}
+ .chapter{top:auto;bottom:calc(max(10px,env(safe-area-inset-bottom)) + 78px);left:10px;right:10px;max-width:none}
+ .chapter>button{padding:8px 12px 8px 8px}
+ .chapter-progress{width:36px;height:36px;font-size:17px}
+ .chapter strong{font-size:15px}
+ .quest-bar{left:54px}
+ .nav{bottom:max(10px,env(safe-area-inset-bottom));gap:6px;width:calc(100% - 20px)}
+ .nav button{flex:1;width:auto;max-width:none;height:66px;min-height:66px;border-radius:14px;padding:6px 2px 4px}
+ .nav button .nav-glyph{width:28px;height:28px}
+ .nav button span{font-size:11px}
+ .inspector.compact{left:10px;right:10px;width:auto;bottom:calc(max(10px,env(safe-area-inset-bottom)) + 76px);padding:12px 14px}
+ .inspector.compact .selected-card{grid-template-columns:70px 1fr auto;gap:2px 10px}
+ .inspector.compact .selected-portrait{width:70px;height:64px}
+ .inspector.compact .selected-title h2{font-size:19px}
+ .inspector.compact .selected-controls>p{display:none}
+ .inspector.compact .button.primary{min-width:112px;font-size:16px;min-height:50px;padding:8px 12px}
+ .inspector.compact .selected-controls .button:not(.text-button),.inspector.compact .selected-controls .act{min-width:112px}
+ .inspector.full-panel{inset:auto 0 0 0;margin:0;width:100%;height:auto;max-height:86dvh;border-radius:26px 26px 0 0;padding:24px 18px calc(24px + env(safe-area-inset-bottom));transform:translateY(40px)}
+ .panel-heading h2{font-size:26px}
+ .species-list,.location-list{grid-template-columns:1fr}
+ .species-card{display:grid;grid-template-columns:110px 1fr;text-align:left;align-items:center}
+ .species-art{height:110px}
+ .orders,.collection-list,.team-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ .order{padding:12px}
+ .order-heading{flex-wrap:wrap;gap:6px}
+ .collection-item .thumb{height:84px}
+ .exp-facts,.food-supply{grid-template-columns:1fr}
+ .tutorial{left:10px;right:10px;width:auto;bottom:calc(max(10px,env(safe-area-inset-bottom)) + 150px);padding:16px 16px 14px 92px}
+ .tutorial .guide-avatar{width:90px;height:90px}
+ .game:has(.tutorial:not([hidden])) .chapter{display:none}
+ .camera-tools{display:none}
+ #toast{top:auto;bottom:170px;font-size:15px}
+}
+.order .act,.species-card .act,.location-card .act{margin-top:auto}
+.order .act .button,.species-card .act .button{margin-top:0}
+.species-art{width:100%}
+.act .button{width:100%}
+.inspector.compact .selected-card{grid-template-columns:96px minmax(0,1fr) auto}
+@media(max-width:760px){.inspector.compact .selected-card{grid-template-columns:70px minmax(0,1fr) auto}}
+.chapter-progress small{display:none}
+.tutorial .button.guide-action,.tutorial .button.primary{display:inline-flex;width:auto;min-height:46px;padding:8px 18px;margin-top:12px;font-size:16px;font-weight:900;background:var(--ui-mint);color:var(--ui-ink);border:0;border-radius:12px;box-shadow:0 4px 0 #3f9c88;opacity:1}
+.tutorial .button.guide-action:hover{background:#b3fbe9}
+
+/* ---- Narration banner (top, Hatch-Dragons-style) ---- */
+.tutorial{left:50%;right:auto;top:84px;bottom:auto;translate:-50% 0;width:min(640px,calc(100% - 40px));padding:16px 20px 16px 104px;display:grid;grid-template-columns:1fr auto;gap:4px 14px;align-items:center;background:linear-gradient(#1c5a58f2,#134645f2);border:3px solid #8ff0dc;border-radius:22px;box-shadow:0 0 0 6px #8ff0dc1f,0 16px 40px #04141799;animation:guide-in .45s cubic-bezier(.2,1.4,.4,1)}
+.tutorial .guide-avatar{left:-6px;top:50%;translate:0 -50%;width:104px;height:104px}
+.tutorial .guide-text{grid-column:1}
+.tutorial .kicker{font-size:11px}
+.tutorial h3{font-size:20px;margin:4px 0}
+.tutorial p{font-size:16px;line-height:1.4}
+.tutorial p b{color:#ffe58f}
+.guide-step{grid-column:2;grid-row:1;align-self:start;margin-top:22px;font:900 14px/1 Nunito,sans-serif;color:#a6e9da;padding:4px 10px;border-radius:999px;background:#0c2a2d99}
+.guide-close{position:absolute;right:6px;top:6px}
+.guide-actions{grid-column:1/-1;display:flex;justify-content:flex-end}
+.tutorial .fog-button{width:auto;min-height:50px;padding:10px 22px;font-size:17px;margin-top:8px;animation:fog-call 1.8s ease-in-out infinite}
+@keyframes fog-call{0%,100%{box-shadow:0 4px 0 #3f9c88,0 0 0 0 #8ff0dc66}50%{box-shadow:0 4px 0 #3f9c88,0 0 0 12px #8ff0dc00}}
+@keyframes guide-in{from{opacity:0;transform:translateY(-14px) scale(.96)}to{opacity:1;transform:none}}
+.is-tutorial .chapter{display:none}
+.game:has(.inspector.full-panel.open) .tutorial{display:none}
+@media(max-width:760px){
+ .tutorial{top:auto;bottom:calc(max(10px,env(safe-area-inset-bottom)) + 80px);width:calc(100% - 20px);padding:14px 14px 14px 86px}
+ .tutorial .guide-avatar{width:86px;height:86px}
+ .tutorial h3{font-size:18px}
+ .tutorial p{font-size:15px}
+ .game:has(.inspector.compact.open) .tutorial{bottom:auto;top:96px}
+}
+
+/* ---- Splash (painted key art, loading line, tap to start, dive into the fog) ---- */
+.main-menu.splash{padding:0;display:block;background:#071a1f;overflow:hidden}
+.splash-art,.splash-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:68% 60%;display:block}
+.splash-art img{animation:splash-breathe 18s ease-in-out infinite alternate;transform-origin:70% 55%}
+@keyframes splash-breathe{from{transform:scale(1.02)}to{transform:scale(1.08) translate(-1%,-1%)}}
+.splash-shade{position:absolute;inset:0;background:linear-gradient(180deg,#071a1f88 0,transparent 30%,transparent 62%,#071a1fdd 100%)}
+.splash-logo{position:absolute;left:clamp(20px,6vw,90px);top:clamp(24px,8vh,90px);width:clamp(220px,30vw,440px);height:auto;filter:drop-shadow(0 6px 18px #04141799);animation:splash-logo-in 1.1s cubic-bezier(.2,1.3,.4,1) both}
+.splash-tag{position:absolute;left:clamp(24px,6.4vw,96px);top:calc(clamp(24px,8vh,90px) + clamp(70px,9vw,130px));color:#e9f7ee;font-weight:800;font-size:clamp(15px,1.5vw,20px);text-shadow:0 2px 8px #041417;animation:splash-logo-in 1.1s .15s cubic-bezier(.2,1.3,.4,1) both}
+@keyframes splash-logo-in{from{opacity:0;transform:translateY(-16px) scale(.96)}to{opacity:1;transform:none}}
+.splash-cta{position:absolute;left:0;right:0;bottom:clamp(40px,9vh,90px);display:flex;flex-direction:column;align-items:center;gap:8px}
+.splash-play{border:0;background:none;padding:16px 36px;color:#fff;font:900 clamp(20px,2.2vw,28px)/1 Nunito,sans-serif;letter-spacing:.3px;text-shadow:0 3px 10px #041417,0 0 24px #8ff0dc88;cursor:pointer;animation:splash-pulse 1.8s ease-in-out infinite}
+.splash-play:focus-visible{outline:3px solid #fff;border-radius:999px}
+@keyframes splash-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.97)}}
+.splash-links .text-button{color:#d7efe6;text-shadow:0 2px 6px #041417}
+.main-menu .menu-gear{position:absolute;right:20px;top:20px}
+/* Dive: the splash pushes into the canopy and dissolves; the valley rises from darkness */
+.main-menu.diving .splash-art img{animation:splash-dive .9s cubic-bezier(.6,0,.9,.4) forwards}
+.main-menu.diving .splash-logo,.main-menu.diving .splash-tag,.main-menu.diving .splash-cta,.main-menu.diving .menu-gear{opacity:0;transition:opacity .3s}
+.main-menu.diving .splash-shade{background:#071a1f;opacity:0;animation:splash-dark .9s ease-in forwards}
+@keyframes splash-dive{to{transform:scale(2.4);filter:blur(6px)}}
+@keyframes splash-dark{to{opacity:1}}
+.game.entering .world-host{animation:world-rise 1.6s ease-out}
+@keyframes world-rise{from{filter:brightness(0)}to{filter:brightness(1)}}
+.is-tutorial #toast{top:auto;bottom:122px}
+
+/* ---- Hand-made feel on the HUD ---- */
+.paper-grain{position:absolute;inset:0;z-index:4;pointer-events:none;opacity:.10;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .45 0 0 0 0 .35 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");animation:grain .5s steps(2) infinite}
+@keyframes grain{0%{background-position:0 0}50%{background-position:-60px 40px}}
+.ink-filters{position:absolute;width:0;height:0}
+.fly-reward{position:fixed;left:-15px;top:-15px;z-index:200;pointer-events:none;filter:drop-shadow(0 3px 3px #0008)}
+.balance-hit{animation:cap-hit .35s ease-out}
+@keyframes cap-hit{0%{transform:scale(1)}40%{transform:scale(1.18,.9)}70%{transform:scale(.95,1.06)}100%{transform:scale(1)}}
+/* Buttons squash like rubber when pressed */
+.button:active:not(:disabled),.nav button:active,.splash-play:active{animation:btn-squash .28s ease-out}
+@keyframes btn-squash{0%{transform:scale(1)}35%{transform:scale(1.06,.9)}70%{transform:scale(.97,1.04)}100%{transform:scale(1)}}
+/* Tutorial and panels: a faint wobbling ink edge drawn around the frame */
+.tutorial:after,.inspector.full-panel:after{content:'';position:absolute;inset:-4px;border:2px solid #8ff0dc55;border-radius:inherit;pointer-events:none;animation:ink-boil .375s steps(1) infinite}
+.reduced-motion .paper-grain,.reduced-motion .tutorial:after{animation:none}
+@media(max-width:760px){
+ .tutorial{padding:12px 12px 12px 70px;gap:2px 8px}
+ .tutorial .guide-avatar{width:70px;height:70px;left:-4px}
+ .tutorial .kicker{display:none}
+ .tutorial h3{font-size:17px;margin:0 0 2px}
+ .tutorial p{font-size:14px}
+ .guide-step{margin-top:0}
+ .tutorial .fog-button{min-height:44px;font-size:16px;margin-top:4px}
+}
+
+/* ---- Mechanics UI: tree shifts, fruit treats, bestiary, goals ---- */
+.tree-status{display:grid;gap:8px;padding:16px 18px;margin-bottom:16px;border-radius:var(--ui-radius);background:var(--ui-card);border:2px solid var(--ui-edge-soft);font-size:15px;color:var(--ui-muted)}
+.tree-status strong{font-size:22px;color:var(--ui-text)}
+.tree-status.ripe{grid-template-columns:auto 1fr auto;align-items:center;border-color:#ffb08a;background:#3a2a24}
+.shift-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.shift-card{display:flex;flex-direction:column;gap:8px;padding:16px;text-align:center;border:2px solid var(--ui-edge-soft);border-radius:var(--ui-radius);background:var(--ui-card)}
+.shift-art{display:flex;justify-content:center;flex-wrap:wrap;gap:2px;min-height:62px;align-items:center}
+.shift-card h3{font-size:19px;margin:0}
+.shift-card p{margin:0 0 6px;flex:1}
+.shift-card .act,.shift-card>.button{margin-top:auto}
+.fruit-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.fruit-dots{display:flex;gap:6px;flex-wrap:wrap}
+.fruit-dots i{width:16px;height:16px;border-radius:50%;background:#0b2427;border:2px solid #ff9a7a88}
+.fruit-dots i.on{background:#ff7a5c;border-color:#ffd0b8;box-shadow:0 0 6px #ff7a5c}
+.fruit-row .button,.fruit-row .act{width:auto;flex:1}
+.inspector.compact .selected-controls .fruit-row{grid-column:2/-1}
+.inspector.compact .selected-controls .fruit-row .button{grid-column:auto;min-width:0;min-height:40px;font-size:14px}
+.segmented{display:flex;gap:6px;padding:5px;margin:0 0 16px;border-radius:14px;background:#06191c}
+.segmented button{flex:1;min-height:44px;border:0;border-radius:10px;background:none;color:var(--ui-muted);font:800 15px Nunito,sans-serif;position:relative}
+.segmented button.on{background:var(--ui-card-hi);color:var(--ui-text);box-shadow:inset 0 0 0 2px var(--ui-edge)}
+.segmented button i{display:inline-grid;place-items:center;min-width:22px;height:22px;margin-left:6px;border-radius:11px;background:#ff5a4e;color:#fff;font:900 12px Nunito,sans-serif;font-style:normal}
+.score-pill{position:absolute;right:70px;top:24px;display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:999px;background:var(--ui-card-hi);border:2px solid var(--ui-edge);font-weight:800;color:var(--ui-muted)}
+.score-pill b{color:var(--ui-gold);font-size:18px}
+.bestiary{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.beast{padding:14px;text-align:center;border:2px solid var(--ui-edge-soft);border-radius:var(--ui-radius);background:var(--ui-card)}
+.beast-art{height:120px}
+.beast h3{font-size:19px;margin:6px 0 0}
+.beast small{color:var(--ui-mint-soft);font-weight:800}
+.beast p{font-size:14px;margin-top:6px}
+.beast.unknown .beast-art img{filter:brightness(0) drop-shadow(0 0 14px #8ff0dc66)}
+.beast.future .beast-art img{filter:brightness(0) drop-shadow(0 0 14px #c58fff77)}
+.beast.unknown h3{color:var(--ui-muted)}
+.goal-list{display:grid;gap:10px}
+.goal{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;padding:14px 16px;border:2px solid var(--ui-edge-soft);border-radius:var(--ui-radius);background:var(--ui-card)}
+.goal h3{font-size:18px;margin:0}
+.goal p{font-size:14px;margin:2px 0 8px}
+.goal small{font-weight:800;color:var(--ui-muted)}
+.goal .meter{margin:0 0 4px}
+.goal.done{border-color:var(--ui-mint);box-shadow:0 0 0 4px #8ff0dc1a}
+.goal.claimed{opacity:.6}
+.goal-reward{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.goal-reward .button,.goal-reward .act{width:auto;min-width:110px}
+.goal-check{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--ui-mint);color:var(--ui-ink)}
+@media(max-width:760px){.shift-list{grid-template-columns:1fr}.score-pill{position:static;margin:-8px 0 12px;width:max-content}.bestiary{grid-template-columns:repeat(2,minmax(0,1fr))}.beast-art{height:90px}}
+
+/* ---- v8 hand-drawn type and sketched frames ---- */
+.panel-heading h2,.inspector h3,.tutorial h3,.selected-title h2,.chapter strong,dialog h2,.splash-tag,#phase-event>span,.sw-nest-caption strong,.sw-location-label strong{font-family:Caveat,'Nunito',cursive;font-weight:700;letter-spacing:.2px}
+.panel-heading h2{font-size:44px;line-height:1}
+.inspector h3,.tutorial h3{font-size:28px;line-height:1.05}
+.inspector.compact .selected-title h2{font-size:30px;text-transform:none;letter-spacing:.3px}
+.chapter strong{font-size:22px;line-height:1}
+.splash-tag{font-size:clamp(22px,2.2vw,30px)}
+.sanctuary-world .sw-nest-caption strong,.sanctuary-world .sw-location-label strong{font-size:22px;line-height:1}
+#phase-event>span{font-size:38px}
+/* Two sketched ink strokes around every frame, slightly off-register and boiling */
+.chapter>button,.nav button,.balance,.phase{position:relative}
+.inspector:after,.tutorial:after,dialog:after{content:'';position:absolute;inset:-5px;border:2.5px solid #0b1f1ccc;border-radius:inherit;pointer-events:none;rotate:.35deg;animation:ink-boil .375s steps(1) infinite}
+.inspector:before,.tutorial:before{content:'';display:block!important;position:absolute;inset:3px;border:1.5px solid #8ff0dc44;border-radius:inherit;pointer-events:none;rotate:-.3deg;animation:ink-boil .375s steps(1) infinite;background:none;height:auto;left:3px;right:3px;top:3px}
+.nav button:after{content:'';position:absolute;inset:-4px;border:2px solid #0b1f1caa;border-radius:20px;pointer-events:none;rotate:-.6deg;animation:ink-boil .375s steps(1) infinite}
+.paper-grain{opacity:.16}
+.reduced-motion .inspector:after,.reduced-motion .inspector:before,.reduced-motion .nav button:after{animation:none}
+
+/* ---- Lira, the animated guide ---- */
+.tutorial .guide-avatar{overflow:visible;transform-origin:50% 90%}
+.tutorial .guide-avatar .dragon-sprite{animation:ink-line .375s steps(1) infinite}
+.guide-shadow{position:absolute;left:18%;right:18%;bottom:4%;height:10%;border-radius:50%;background:#0006;filter:blur(3px)}
+.guide-talking .dragon-sprite{animation:guide-talk .32s ease-in-out infinite,ink-line .375s steps(1) infinite}
+@keyframes guide-talk{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-4px) scale(1.04,.96)}}
+.guide-hop .dragon-sprite{animation:guide-hop .7s cubic-bezier(.3,1.6,.5,1),ink-line .375s steps(1) infinite}
+@keyframes guide-hop{0%{transform:translateY(0) scale(1)}20%{transform:translateY(0) scale(1.12,.86)}50%{transform:translateY(-26px) scale(.94,1.08) rotate(-6deg)}80%{transform:translateY(0) scale(1.06,.94)}100%{transform:none}}
+.guide-sparks{position:absolute;left:50%;top:30%;pointer-events:none}
+.guide-sparks i{position:absolute;width:8px;height:8px;border-radius:50%;background:#fff6c0;box-shadow:0 0 8px #ffe58f;opacity:0}
+.guide-hop .guide-sparks i{animation:guide-spark .8s ease-out forwards}
+.guide-sparks i:nth-child(1){--x:-46px;--y:-30px}.guide-sparks i:nth-child(2){--x:40px;--y:-38px}.guide-sparks i:nth-child(3){--x:-30px;--y:-60px;animation-delay:.08s}.guide-sparks i:nth-child(4){--x:22px;--y:-64px;animation-delay:.12s}.guide-sparks i:nth-child(5){--x:52px;--y:-10px;animation-delay:.05s}
+@keyframes guide-spark{0%{opacity:1;transform:translate(0,0) scale(.4)}100%{opacity:0;transform:translate(var(--x),var(--y)) scale(1.2)}}
+/* typewriter */
+.tutorial p .tw{opacity:0;transition:opacity .08s}
+.tutorial p .tw.on{opacity:1}
+.tutorial:not(:has(.guide-talking)) p .tw{opacity:1}
+.reduced-motion .guide-avatar .dragon-sprite{animation:none}
+.species-list{grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}
+.species-card.is-locked .species-art img{filter:brightness(0) drop-shadow(0 0 12px #c58fff88)}
+.locked-species{display:flex;gap:6px;align-items:center;justify-content:center;color:var(--ui-muted)!important;font-size:14px!important;line-height:1.35}
+.lang-pills{display:flex;gap:6px}
+.lang-pills .button{width:auto;min-height:40px}
+.splash-lang{position:absolute;right:80px;top:24px;display:flex;gap:4px;padding:4px;border-radius:999px;background:#071a1fb3;border:2px solid #8ff0dc55}
+.splash-lang button{border:0;background:none;color:#cfe8df;font:900 14px Nunito,sans-serif;padding:8px 12px;border-radius:999px;cursor:pointer}
+.splash-lang button.on{background:var(--ui-mint);color:var(--ui-ink)}
+.species-card .act,.order .act,.shift-card .act,.location-card .act{align-self:stretch;width:100%}
+.species-card .act .button,.order .act .button,.shift-card .act .button{width:100%;white-space:nowrap}
+.species-card{align-items:stretch}
+/* Scrolling panels: pseudo-element frames would scroll with the content, so draw the sketch strokes as fixed shadows */
+.inspector.full-panel:after,.inspector.full-panel:before{display:none!important}
+.inspector.full-panel{box-shadow:0 0 0 3px #0b1f1ccc,0 0 0 6px #8ff0dc22,var(--ui-shadow)}
+
+/* ---- v10 type: back to Nunito (the handwritten face is gone), everything a size larger ---- */
+.panel-heading h2,.inspector h3,.tutorial h3,.selected-title h2,.chapter strong,dialog h2,.splash-tag,#phase-event>span,.sw-nest-caption strong,.sw-location-label strong{font-family:'Nunito',ui-rounded,system-ui,sans-serif!important;font-weight:900;letter-spacing:-.2px}
+.panel-heading h2{font-size:34px;line-height:1.1}
+.inspector h3,.tutorial h3{font-size:22px;line-height:1.2}
+.inspector.compact .selected-title h2{font-size:24px}
+.chapter strong{font-size:17px;line-height:1.2}
+.splash-tag{font-size:clamp(17px,1.6vw,22px)}
+.sanctuary-world .sw-nest-caption strong,.sanctuary-world .sw-location-label strong{font-size:18px;line-height:1.15}
+.sanctuary-world .sw-nest-caption small,.sanctuary-world .sw-location-label small{font-size:14px}
+#phase-event>span{font-size:28px}
+.inspector p,.panel-heading p,.tutorial p,dialog p{font-size:17px}
+.subtle,.inspector small,.why,.feed-progress>small,.goal small{font-size:15px}
+.button{font-size:17px}
+.balance b{font-size:22px}
+.nav button span{font-size:14px}
+.phase-text small{font-size:14px}
+.inspector.compact .selected-controls>p,.inspector.compact .selected-controls .compact-stat{font-size:15px}
+.sanctuary-world .sw-harvest{font-size:19px}
+.sw-timer small{font-size:15px}
+@media(max-width:760px){
+ .panel-heading h2{font-size:27px}
+ .inspector p,.tutorial p{font-size:16px}
+ .nav button span{font-size:12px}
+ .balance b{font-size:17px}
+}
+
+/* ---- Tutorial: spotlight + hand-drawn pointing hand ---- */
+.tutorial .tutorial-focus,.inspector .tutorial-focus{position:relative}
+.sanctuary-world .tutorial-focus,.tutorial-spot{z-index:30}
+.tutorial-spot{box-shadow:0 0 0 4px #fff7b0,0 0 0 9999px #03111499!important;border-radius:999px}
+.nav button.tutorial-spot{border-radius:18px}
+.tutorial-focus:after{content:'';position:absolute;left:60%;top:70%;width:64px;height:64px;pointer-events:none;z-index:31;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M22 6c3 0 5 2 5 5v17l2-1c3-1 5 0 6 2l1 2 2-1c3-1 5 0 6 3l1 2 2-1c3 0 5 2 5 5v9c0 9-7 16-16 16h-4c-6 0-11-3-14-8L8 43c-2-3-1-6 1-7s5-1 7 1l1 2V11c0-3 2-5 5-5Z' fill='%23fff8e8' stroke='%231d2a22' stroke-width='3' stroke-linejoin='round'/%3E%3Cpath d='M27 28v8m10-6v6m9-4v5' stroke='%231d2a22' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E") center/contain no-repeat;filter:drop-shadow(0 4px 4px #0008);animation:tut-tap 1.1s ease-in-out infinite}
+@keyframes tut-tap{0%,100%{transform:translate(0,0) rotate(-12deg)}45%{transform:translate(-8px,-10px) rotate(-12deg) scale(.92)}}
+.tutorial .tutorial-focus:after{left:auto;right:-26px;top:40%}
+.nav button.tutorial-focus:after{left:50%;top:-58px;transform-origin:50% 100%}
+.reduced-motion .tutorial-focus:after{animation:none}
+.away-loot{display:flex;flex-wrap:wrap;justify-content:center;gap:18px;margin:6px 0 18px}
+.away-loot span{display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 16px;border-radius:16px;background:var(--ui-card);border:2px solid var(--ui-edge-soft);animation:away-pop .5s cubic-bezier(.2,1.5,.4,1) both}
+.away-loot span:nth-child(2){animation-delay:.08s}.away-loot span:nth-child(3){animation-delay:.16s}.away-loot span:nth-child(4){animation-delay:.24s}
+.away-loot b{font-size:22px;font-weight:900;color:var(--ui-gold)}
+@keyframes away-pop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
+/* skip only after the first real actions */
+.tutorial[data-step='1'] .guide-close,.tutorial[data-step='2'] .guide-close,.tutorial[data-step='3'] .guide-close{display:none}
+.game:has(.inspector.open) #toast{top:max(96px,env(safe-area-inset-top));bottom:auto}
+/* 44px touch targets */
+.guide-close,.inspector.compact .selected-title .close-panel{width:44px;height:44px;min-width:44px}
+.inspector.compact .selected-controls .text-button{min-height:44px}
+.splash-lang button{min-height:44px;min-width:48px}
+@media(max-width:760px){.hud .icon-button{width:44px;height:44px}.phase{min-height:44px}}
+.species-art{flex:0 0 150px}
+/* Card art must never be squeezed by flex columns */
+.collection-item .thumb{flex:0 0 110px;height:110px}
+.team-choice .thumb{flex:0 0 90px;height:90px}
+.beast-art{flex:0 0 120px}
+.shift-art{flex:0 0 62px}
+.collection-item .thumb .dragon-sprite,.team-choice .thumb .dragon-sprite,.beast-art .dragon-sprite,.species-art .dragon-sprite{width:100%;height:100%}
+/* calmer badges: a dot means "something to do", numbers only when they count */
+.nav button>i:not(:empty){font-size:14px}
+.nav button.has-badge>i{animation:none}
+.game:has(.inspector.full-panel.open) #toast{top:auto;bottom:112px}
+/* in the valley the spotlight only hints: the creature under the bubble must stay readable */
+.sanctuary-world .tutorial-spot{box-shadow:0 0 0 4px #fff7b0,0 0 26px 8px #fff7b066,0 0 0 9999px #0311144d!important}
+/* when the guide's hand points at the nav bar, lift toasts clear of it */
+.game:has(.nav .tutorial-focus) #toast{top:auto;bottom:190px}
+.tutorial .button{width:auto;max-width:100%;flex:0 0 auto;white-space:normal;text-align:center}
+.tutorial .tutorial-focus:after{right:-46px;top:46%}
+/* phase announcements wait behind open panels instead of bleeding through them */
+.game:has(.inspector.full-panel.open) #phase-event{opacity:0;visibility:hidden}
+/* phones: language toggle and gear sit in their own top row, logo starts below them */
+@media(max-width:560px){.splash-logo{top:92px}.splash-tag{top:calc(92px + 66px)}.splash-lang{top:max(18px,env(safe-area-inset-top))}}
+/* phones: the compact sheet's action goes under the title so long names never clip */
+@media(max-width:560px){.inspector.compact .selected-card{grid-template-columns:70px minmax(0,1fr)}.inspector.compact .selected-card .selected-controls>*{grid-column:2/-1!important;grid-row:auto!important}.inspector.compact .selected-card .selected-controls>.button{width:100%}.inspector.compact .fruit-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}}
+/* painted vignettes from the valley dress the shop and the shrine panels */
+.panel-heading.has-art{position:relative;padding-right:200px;min-height:150px}
+.panel-art{position:absolute;right:48px;top:-14px;width:150px;height:auto;pointer-events:none;filter:drop-shadow(0 10px 14px #0007);animation:art-bob 5s ease-in-out infinite}
+.project.has-art{position:relative;padding-right:150px;overflow:visible}
+.project-art{position:absolute;right:10px;top:50%;width:128px;height:auto;transform:translateY(-50%);pointer-events:none;filter:drop-shadow(0 8px 12px #0007)}
+@keyframes art-bob{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-5px) rotate(1deg)}}
+.reduced-motion .panel-art{animation:none}
+@media(max-width:560px){.panel-heading.has-art{padding-right:0;min-height:0}.panel-heading.has-art:after{content:'';display:block;clear:both}.panel-art{position:static;float:right;width:96px;margin:30px 0 4px 8px;shape-outside:margin-box}.project.has-art{padding-right:96px}.project-art{width:84px;top:22px;transform:none}}
+
+/* Fruit-to-next-level progress: caption above the dots so they read as progress. */
+.fruit-progress{display:flex;flex-direction:column;gap:5px}.fruit-progress small{font-size:14px;font-weight:800;color:#ffb59c}
+
+/* The save/NEAR label sits under the nav wherever the nav spans the bottom; NEAR info stays in the market. */
+@media(max-width:1100px){.status-label{display:none}}
+
+/* Room under the quest title so the progress bar never crosses its descenders. */
+.chapter button{padding-bottom:18px}.quest-bar{bottom:7px}
+.habitat-bonus{font-size:15px!important;line-height:1.45}
+
+/* Chapter finale: painted art instead of a bare icon, stats in readable type. */
+.completion-art{display:flex;justify-content:center;align-items:flex-end;margin:-6px auto 18px;height:150px}
+.completion-art img{height:150px;width:auto;filter:drop-shadow(0 10px 14px #0007);animation:art-bob 5s ease-in-out infinite}
+.completion-art.trio img{height:auto;width:34%;max-height:130px;object-fit:contain;margin:0 -4%}
+.completion-art.trio img:nth-child(2){animation-delay:-1.6s}
+.completion-art.trio img:nth-child(3){animation-delay:-3.2s}
+.reduced-motion .completion-art img{animation:none}
+.completion-stats{font-size:15px}.completion-stats b{font-size:30px}
+
+/* ---- v4 hackathon economy: three resources, each labelled; Mara's market; loop explainer ---- */
+.hud .balances{justify-content:flex-start;width:auto;flex:0 1 auto}
+.balance{font:inherit;color:inherit;cursor:pointer;text-align:left;display:flex;align-items:center}
+.balance>span:nth-child(2){display:flex;flex-direction:column;gap:3px}
+.balance b{line-height:1}
+.balance small{position:static;width:auto;height:auto;clip:auto;overflow:visible;display:block;margin:0;font-size:13px;font-weight:800;line-height:1;color:#bfe0d4}
+.balance:hover,.balance:focus-visible{border-color:var(--ui-mint)}
+@media(max-width:560px){.balance small{font-size:11px}.balance{padding-right:12px}}
+#toast.info{border-color:var(--ui-mint)}
+.dragon-job,.makes{display:flex;align-items:center;gap:8px;font-weight:700}
+.dragon-job .gem,.makes .gem{flex:none}
+.makes{margin:6px 0 12px;color:var(--ui-text,#e8f3ec)}
+.trades{display:grid;gap:14px;margin:16px 0}
+.trade-row{padding:16px;border-radius:18px;background:#0e2a2dcc;border:2px solid var(--ui-edge-soft,#2c5a57)}
+.trade-good{display:flex;align-items:center;gap:12px}
+.trade-good>span{flex:1;display:flex;flex-direction:column;gap:2px}
+.trade-good strong{font-size:20px}
+.trade-good small{font-size:15px;color:var(--ui-muted)}
+.trade-price{display:flex;align-items:center;gap:4px;font-size:26px;font-weight:900;color:#ffe08a}
+.trade-price small{font-size:13px;color:var(--ui-muted);font-weight:700;margin-left:2px}
+.mara-says{margin:10px 0 12px;font-size:15px;font-style:italic;color:#d9ecdf}
+.trade-actions{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start}
+.trade-actions .act{display:flex;flex-direction:column}
+.loot{display:inline-flex;align-items:center;gap:4px;margin-right:12px;font-weight:900}
+.team-hint{font-size:16px;margin:12px 0}
+.section-title{margin:22px 0 10px;font-size:18px}
+.loop{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0 18px}
+.loop-step{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:14px 10px;border-radius:16px;background:#0e2a2dcc;border:2px solid var(--ui-edge-soft,#2c5a57)}
+.loop-step b{font-size:17px}
+.loop-step small{font-size:14px;line-height:1.35;color:#cfe3d8}
+@media(max-width:560px){.loop{grid-template-columns:1fr}.loop-step{flex-direction:row;text-align:left}.trade-actions{grid-template-columns:1fr}}
+
+/* While Lira is talking, toasts sit under the HUD so they never cover her button. */
+.game.is-tutorial #toast{top:84px!important;bottom:auto!important}
+@media(max-width:560px){.game.is-tutorial #toast{top:118px!important}}
+.keep-note{display:block;margin-top:8px;font-size:14px;color:var(--ui-muted)}
+/* Species cards: picture on top while two cards share a row; side-by-side only on phones. */
+@media(min-width:561px){.species-card{display:flex!important;flex-direction:column;text-align:center}.species-card .makes{justify-content:center}.species-art{height:130px}}
+.species-card p.makes{flex:none;color:#e8f3ec;font-size:16px;font-weight:700;margin:4px 0 10px}
+.species-card>div:last-child>.button,.species-card .act{margin-top:auto}
+/* Phones: all three labelled resources fit on one row. */
+@media(max-width:560px){.hud .balances{flex-wrap:nowrap;gap:4px;max-width:calc(100% - 100px)}.balance{padding:3px 8px 3px 3px;gap:4px}.balance .gem{width:22px;height:22px}.balance b{font-size:15px}.balance small{font-size:10px}}
+/* Dragon card adapts to its own width: in a narrow card the controls run full width under the title. */
+.inspector.compact{container-type:inline-size}
+@container (max-width:460px){
+ .inspector.compact .selected-card{grid-template-columns:72px minmax(0,1fr)!important}
+ .inspector.compact .selected-portrait{width:72px;height:66px;grid-row:1}
+ .inspector.compact .selected-card .selected-controls>*{grid-column:1/-1!important;grid-row:auto!important}
+ .inspector.compact .selected-controls .button:not(.text-button),.inspector.compact .selected-controls .act{width:100%;min-width:0}
+ .inspector.compact .selected-controls .act .button{width:100%}
+}
+.selected-controls p .gem{display:inline-block;vertical-align:-5px;width:20px;height:20px}
+.cost .gem{display:inline-block;vertical-align:-4px;margin-right:2px;flex:none}
+.cost.short{filter:saturate(.6)}
+.trade-trend{display:flex;align-items:center;gap:12px;margin-top:10px}
+.trade-trend small{font-size:13px;color:var(--ui-muted)}
+.spark{flex:none;filter:url(#boil1)}
+.spark polyline{stroke:#9fd8c8}.spark circle{fill:#9fd8c8}
+.spark.down polyline,.spark.down circle{stroke:#ff8f7a;fill:none}.spark.down circle{fill:#ff8f7a}
+.spark.up polyline{stroke:#9ee37d}.spark.up circle{fill:#9ee37d}
+/* Lira's one-time tips: a small paper card that slides in under the goal card. */
+.lira-tip{position:absolute;z-index:8;left:20px;top:150px;width:min(380px,calc(100% - 40px));display:grid;grid-template-columns:64px 1fr;gap:10px;align-items:center;padding:12px 40px 12px 12px;border-radius:18px;background:var(--ui-bg,#103033);border:2px solid var(--ui-mint,#8fe3cf);box-shadow:var(--ui-shadow)}
+.lira-tip[hidden]{display:none}
+.lira-tip.show{animation:tip-in .45s cubic-bezier(.2,1.4,.4,1)}
+.lira-tip p{margin:0;font-size:15px;line-height:1.4;font-weight:700}
+.lira-tip p b{color:var(--ui-mint,#8fe3cf)}
+.lira-face{width:64px;height:60px;display:grid;place-items:center}
+.lira-face .dragon-sprite{--dg-w:64px!important}
+.lira-tip .guide-close{position:absolute;right:6px;top:6px}
+@keyframes tip-in{from{opacity:0;translate:-30px 0}}
+.reduced-motion .lira-tip.show{animation:none}
+@media(max-width:560px){.lira-tip{left:10px;top:auto;bottom:calc(max(10px,env(safe-area-inset-bottom)) + 168px);width:calc(100% - 20px)}}
+.game:has(.inspector.full-panel.open) .lira-tip,.game:has(#dialog[open]) .lira-tip{display:none}
+.nest-target{display:flex;align-items:center;gap:8px;margin:0 0 14px;padding:10px 14px;border-radius:14px;background:#0e2a2dcc;border:2px dashed var(--ui-edge-soft,#2c5a57);font-size:16px}
+#phase-event.level-up{border-color:#9fe8ff}
