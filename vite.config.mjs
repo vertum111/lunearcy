@@ -1,6 +1,9 @@
 // The testnet bridge stays on the local development server; it is never bundled
 // into the static game or exposed by a production preview.
 export default {
+  // Privy's SDK imports optional Solana packages for features this game does not use; let those imports resolve to
+  // empty shims instead of failing the build.
+  build:{rollupOptions:{shimMissingExports:true}},
   server:{fs:{deny:['.env','.env.*','*.{crt,pem}','**/.git/**','**/.local/**']}},
   plugins: [{
     name: 'local-testnet-demo',

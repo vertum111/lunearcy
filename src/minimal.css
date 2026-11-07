@@ -455,3 +455,10 @@ body.cs-playing .game{visibility:hidden}
 .near-facts{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0}
 .near-facts>span strong{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
 @media(max-width:560px){.near-facts{grid-template-columns:1fr}}
+/* Splash: email / Google sign-in sits under the two main buttons, as a quieter third choice. */
+.main-menu.splash .splash-cta{flex-wrap:wrap}
+.main-menu.splash .splash-signin{flex-basis:100%;min-height:44px;padding:8px 16px;border:0;border-radius:999px;background:none;color:#e6f5ef;font:800 16px/1.2 Nunito,sans-serif;text-decoration:underline;text-underline-offset:4px;text-shadow:0 2px 8px #000c;cursor:pointer}
+.main-menu.splash .splash-signin:hover{color:#fff}
+.main-menu.splash .splash-signin:focus-visible{outline:2px solid #fff;outline-offset:3px}
+.signed-in{display:flex;align-items:center;gap:6px;color:#cfe3d8}.signed-in svg{color:#8ff0dc}
+#privy-root{position:relative;z-index:2000}

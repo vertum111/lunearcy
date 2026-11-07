@@ -24,15 +24,29 @@ setSound(prefs.sound);
 // ---- The valley on NEAR testnet (see chain.js). On by default; ?offline or VITE_CHAIN=off keeps the game local only.
 const CHAIN_ON=import.meta.env.VITE_CHAIN!=='off'&&!new URLSearchParams(location.search).has('offline');
 let chain=null,chainReady=null,chainStatus={kind:'off'},chainRefreshed=0;
-function startChain(){
+// Email / Google sign-in (Privy). The App ID is public; the dashboard restricts which sites may use it.
+const PRIVY_APP_ID=import.meta.env.VITE_PRIVY_APP_ID||'cmw6y3hqm00g20hjm0j4j79f3';
+let privy=null,signedIn=null;
+function startChain(identity){
  if(!CHAIN_ON)return;
- // The player's NEAR key lives under its own name (the old registry demo used KEY+'-near' for its records).
- chain=connectChain({storageKey:KEY+'-player-key',
+ chain?.close();
+ // The guest's NEAR key lives under its own name (the old registry demo used KEY+'-near' for its records).
+ chain=connectChain({storageKey:KEY+'-player-key',identity,
   onState:s=>{try{state=E.hydrate(s);hasSave=true;persist();if(started)render();}catch(e){console.warn('NEAR state',e);}},
   onStatus:st=>{chainStatus=st;showChainStatus();},
   onError:e=>console.warn('NEAR',e?.message||e)});
  chainReady=chain.start(()=>state).catch(e=>{console.warn('NEAR unavailable, playing locally:',e?.message||e);chain=null;chainStatus={kind:'offline'};showChainStatus();});
 }
+/** Loads Privy on demand. A signed-in player's valley lives on their Privy wallet; signing out returns to the guest. */
+async function loadPrivy(){
+ if(privy)return privy;
+ const {startPrivy}=await import('./privy.js');
+ privy=startPrivy({appId:PRIVY_APP_ID,
+  onAccount:({accountId,signer,email})=>{const fresh=!signedIn;signedIn={accountId,email};prefs.login='privy';prefSave();startChain({accountId,signer});if(fresh&&started)toast(email?`Ти увійшов: ${email}. Долина збережена в NEAR.`:'Ти увійшов. Долина збережена в NEAR.','success');if(document.querySelector('#dialog').open&&document.querySelector('#dialog').dataset.kind==='nearInfo')showDialog('nearInfo');},
+  onLogout:()=>{signedIn=null;delete prefs.login;prefSave();startChain();if(document.querySelector('#dialog').open)showDialog('nearInfo');}});
+ return privy;
+}
+async function signIn(){try{(await loadPrivy());setTimeout(()=>privy.login(),50);}catch(e){console.warn('Privy',e);toast('Вхід зараз недоступний. Гра працює як гість.','error');}}
 function showChainStatus(){
  const el=document.querySelector('#local-status');if(!el)return;
  const text={synced:'Збережено в NEAR',saving:'Зберігаємо в NEAR…',connecting:'Підключаємо NEAR…',joining:'Створюємо долину в NEAR…',offline:'Локальне збереження',off:'Локальне збереження'}[chainStatus.kind]||'Локальне збереження';
@@ -104,7 +118,7 @@ function shell(){
  <aside class="inspector" id="inspector" aria-label="Ігрові дії" tabindex="-1"></aside>
  <nav class="nav" aria-label="Меню гри">${[['home','home'],['eggs','egg'],['market','market'],['expedition','compass'],['valley','book']].map(([id,ic])=>`<button data-tab="${id}" aria-label="${names[id]}" title="${names[id]}">${navIcon(ic)}<span>${names[id]}</span><i></i></button>`).join('')}</nav>
  <div class="status-label"><span class="status-dot"></span><span id="local-status">Локальне збереження</span><button data-action="nearInfo">${nearMark(11)} NEAR</button></div><div id="toast" role="status" aria-live="polite"></div><aside id="lira-tip" class="lira-tip" role="status" aria-live="polite" hidden></aside><div id="phase-event" aria-hidden="true"></div><dialog id="dialog"></dialog>
- <section class="main-menu splash" id="main-menu"><picture class="splash-art"><source media="(max-width: 900px)" srcset="/art/splash-sm.webp"><img src="/art/splash.webp" alt="" draggable="false"></picture><div class="splash-shade"></div><div class="splash-brand"><h1 class="splash-logo"><img src="/brand/lunearcy-mark.svg" alt="" width="76" height="76" draggable="false"><span>Lunearcy</span></h1><p class="splash-tag">Вирощуй драконів. Розбуди долину.</p><p class="splash-near">${nearMark(18)}<span>Створено на NEAR</span></p></div><div class="splash-cta"><button class="splash-play" data-action="play"><span>${hasSave?'Продовжити':'Почати гру'}</span></button><button class="splash-help" data-action="help">Як грати</button></div><div class="splash-top"><div class="splash-lang">${Object.entries(LANGS).map(([id])=>`<button class="${id===lang?'on':''}" data-action="setLang:${id}" lang="${id}">${id.toUpperCase()}</button>`).join('')}</div><button class="splash-gear" data-action="settings" aria-label="Налаштування">${icon('gear')}</button></div></section>
+ <section class="main-menu splash" id="main-menu"><picture class="splash-art"><source media="(max-width: 900px)" srcset="/art/splash-sm.webp"><img src="/art/splash.webp" alt="" draggable="false"></picture><div class="splash-shade"></div><div class="splash-brand"><h1 class="splash-logo"><img src="/brand/lunearcy-mark.svg" alt="" width="76" height="76" draggable="false"><span>Lunearcy</span></h1><p class="splash-tag">Вирощуй драконів. Розбуди долину.</p><p class="splash-near">${nearMark(18)}<span>Створено на NEAR</span></p></div><div class="splash-cta"><button class="splash-play" data-action="play"><span>${hasSave?'Продовжити':'Почати гру'}</span></button><button class="splash-help" data-action="help">Як грати</button>${CHAIN_ON?'<button class="splash-signin" data-action="signIn">Увійти: пошта або Google</button>':''}</div><div class="splash-top"><div class="splash-lang">${Object.entries(LANGS).map(([id])=>`<button class="${id===lang?'on':''}" data-action="setLang:${id}" lang="${id}">${id.toUpperCase()}</button>`).join('')}</div><button class="splash-gear" data-action="settings" aria-label="Налаштування">${icon('gear')}</button></div></section>
  </div>`;
  world=mountWorld(document.querySelector('#world'),{onSelect:selectDragon,onAction:perform,onLocation:openLocation,onBackground:()=>{if(panelOpen&&tab==='home'){panelOpen=false;render();}}});
  world.update(state,{selected:null,now:Date.now(),fog:prefs.fog??2});
@@ -401,6 +415,8 @@ app.addEventListener('click',event=>{
  if(type==='play'&&chain&&!['synced','saving'].includes(chainStatus.kind)&&!b.dataset.waited){b.dataset.waited='1';const label=b.innerHTML;b.disabled=true;b.textContent='Готуємо долину…';translateNode(b);Promise.race([chainReady,new Promise(r=>setTimeout(r,12000))]).then(()=>{b.disabled=false;b.innerHTML=label;b.click();});return;}
  if(type==='play'){const showAway=hasSave&&awayMs>300000&&(state.dragons.some(d=>d.stage==='adult'&&E.production(state,d).stored)||state.expedition?.ends<=Date.now());if(showAway&&!document.querySelector('#main-menu').classList.contains('diving'))setTimeout(function away(){if(cutscenePlaying)return setTimeout(away,500);showDialog('away');},2200);const menu=document.querySelector('#main-menu');if(prefs.motion&&!menu.classList.contains('diving')){menu.classList.add('diving');document.querySelector('.game').classList.add('entering');sound('tap');setTimeout(()=>{b.disabled=false;b.click();},900);b.disabled=true;setTimeout(()=>{menu.classList.remove('diving');document.querySelector('.game').classList.remove('entering');},2600);return;}if(!hasSave){state=E.createState();selected=state.dragons[0].id;prefs.tut=1;prefs.fog=0;prefs.eclipseSeen=false;prefs.eggSelected=false;previousRed=false;}started=true;prefs.started=true;prefSave();if(!hasSave)persist();render();world.home();sound('hatch');if(PREVIEW_CUTSCENE){prefs.eclipseSeen=false;setTimeout(firstEclipse,900);}return;}
  if(type==='menu'){showDialog('menu');return;}
+ if(type==='signIn'){signIn();return;}
+ if(type==='signOut'){privy?.logout();return;}
  if(type==='nearRefresh'){loadNear(true);return;}
  if(type==='nearRegister'||type==='nearTrade'){nearAction(type);return;}
  if(type==='simWeek'){openMarketWeek({translate:translateNode,reduced:!prefs.motion||matchMedia('(prefers-reduced-motion: reduce)').matches});return;}
@@ -473,6 +489,7 @@ function nearPanel(){
   +`<p>Кожна монета, ягода, кристал і дракон — токен стандарту NEP-245 в одному контракті. Люсі — сам цей контракт: її гаманець і полиці спільні для всіх гравців, тож чужий продаж змінює ціну й для тебе. Газ платить спонсор гри — гаманець не потрібен.</p>`
   +`<div class="connection-state"><strong>${on?'Долина збережена в testnet':chainStatus.kind==='connecting'||chainStatus.kind==='joining'?'Підключаємо NEAR…':'Зараз гра працює локально'}</strong>${on&&id?`<a href="${esc(nearExplorer(id))}" target="_blank" rel="noopener noreferrer">Твій акаунт ${esc(id.slice(0,8))}… ↗</a>`:''}<a href="${esc(nearExplorer(NEAR_CONTRACT))}" target="_blank" rel="noopener noreferrer">Контракт Люсі: ${esc(NEAR_CONTRACT)} ↗</a></div>`
   +facts
+  +(CHAIN_ON?(signedIn?`<p class="signed-in">${icon('check',16)} Ти увійшов${signedIn.email?`: <b data-no-tr>${esc(signedIn.email)}</b>`:''}. Долина та сама на будь-якому пристрої.</p>${action('Вийти','signOut','ghost small')}`:`<p class="subtle">Зараз ти граєш як гість: долина прив’язана до цього браузера.</p>${action('Зберегти долину: пошта або Google','signIn','primary')}`):'')
   +(legend.length?`<p class="legend-tag">${icon('sparkle',14)} Легенда долини: ${legend.map(d=>d.name?`<span data-no-tr>${esc(d.name)}</span>`:esc(name(d))).join(', ')}</p>`:'<p class="subtle">Дракон 5 рівня стає легендою долини.</p>')
   +`<p class="subtle">Це testnet: токени не мають грошової вартості. Правила цін — у src/market-rules.js і contracts/economy/src/rules.rs, однакові до монети.</p>`;
 }
@@ -545,7 +562,7 @@ window.addEventListener('storage',e=>{if(e.key===KEY&&e.newValue){try{state=E.hy
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){latest();render();}});
 shell();
 startI18n();
-startChain();
+if(CHAIN_ON&&prefs.login==='privy'){loadPrivy().catch(()=>{});setTimeout(()=>{if(!signedIn&&!chain)startChain();},8000);}else startChain();
 // The loader (index.html) stays up until the art of the first minutes is downloaded and decoded, including both valley
 // plates exactly as the world declares them (srcset may pick the HD file); the pose clips and the film follow later.
 {

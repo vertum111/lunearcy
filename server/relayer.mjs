@@ -7,6 +7,7 @@
  * Env: SPONSOR_ACCOUNT_ID, SPONSOR_PRIVATE_KEY, CONTRACT_ID, ALLOWED_ORIGINS (comma list), PORT,
  *      TOPUP_NEAR (default 0.1), LOW_NEAR (default 0.05), DAILY_CAP (default 500), PRIVY_APP_ID (optional). */
 import http from 'node:http';
+import {createHash} from 'node:crypto';
 import {Account,JsonRpcProvider,KeyPair,PublicKey,nearToYocto} from 'near-api-js';
 
 const env=process.env;
@@ -27,14 +28,16 @@ const cors=origin=>ORIGINS.includes(origin)?{'access-control-allow-origin':origi
 async function body(req){let t='';for await(const c of req){t+=c;if(t.length>4096)throw Error('Request too large');}return JSON.parse(t||'{}');}
 const hex=bytes=>Buffer.from(bytes).toString('hex');
 
-/** The browser signs `lunearcy-fund:<accountId>:<timestamp>` with its player key; the implicit account id is that
- * key's public bytes in hex, so a valid signature proves the caller owns the account it asks to fund. */
+/** The browser signs SHA-256(`lunearcy-fund:<accountId>:<timestamp>`) with its player key (a guest key or a Privy
+ * embedded wallet, which signs 32-byte hashes); the implicit account id is that key's public bytes in hex, so a valid
+ * signature proves the caller owns the account it asks to fund. */
 function verifyOwnership({accountId,publicKey,signature,timestamp}){
  if(!/^[0-9a-f]{64}$/.test(accountId||''))throw Error('Expected an implicit account id');
  if(Math.abs(Date.now()-Number(timestamp))>120_000)throw Error('Stale challenge');
  const pk=PublicKey.fromString(publicKey);
  if(hex(pk.data)!==accountId)throw Error('The key does not match the account');
- const ok=pk.verify(new TextEncoder().encode(`lunearcy-fund:${accountId}:${timestamp}`),Buffer.from(signature,'base64'));
+ const digest=createHash('sha256').update(`lunearcy-fund:${accountId}:${timestamp}`).digest();
+ const ok=pk.verify(new Uint8Array(digest),Buffer.from(signature,'base64'));
  if(!ok)throw Error('Bad signature');
 }
 async function balance(accountId){try{const a=await provider.viewAccount({accountId});return BigInt(a.amount);}catch(e){if(/does not exist|UNKNOWN_ACCOUNT|UnknownAccount/i.test(String(e.message)))return 0n;throw e;}}

@@ -7,6 +7,9 @@
 import {SLOTS} from './engine.js';
 import deployment from '../contracts/economy/deployment.testnet.json';
 
+// A Node `util` polyfill pulled in by the wallet libraries reads `process.env`; browsers have no `process`.
+globalThis.process??={env:{}};
+
 export const CONTRACT=import.meta.env.VITE_CONTRACT_ID||deployment.contractId;
 const RPC=import.meta.env.VITE_NEAR_RPC||'https://test.rpc.fastnear.com';
 const SPONSOR=import.meta.env.VITE_SPONSOR_URL||'http://127.0.0.1:8787';
@@ -43,20 +46,27 @@ const hex=bytes=>[...bytes].map(b=>b.toString(16).padStart(2,'0')).join('');
 const b64=bytes=>btoa(String.fromCharCode(...bytes));
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 
-/** One player's link to the chain. `onState(state)` receives fresh chain state; `onStatus(text, kind)` the link status. */
-export function connect({storageKey,onState,onStatus,onError}){
+const sha256=async bytes=>new Uint8Array(await crypto.subtle.digest('SHA-256',bytes));
+
+/** One player's link to the chain. `onState(state)` receives fresh chain state; `onStatus({kind})` the link status.
+ *  `identity` is an optional signed-in player ({accountId, signer} from Privy); without it the browser keeps a guest
+ *  key under `storageKey`. */
+export function connect({storageKey,identity,onState,onStatus,onError}){
  let near,account,provider,queue=Promise.resolve(),pending=0,closed=false;
  const status=(kind,extra={})=>onStatus?.({kind,pending,accountId:account?.accountId,...extra});
  async function view(method,args={}){return provider.callFunction({contractId:CONTRACT,method,args});}
- async function key(){
+ function guestKey(){
   let secret=null;try{secret=localStorage.getItem(storageKey);}catch{}
   if(!secret){secret=near.KeyPair.fromRandom('ed25519').toString();try{localStorage.setItem(storageKey,secret);}catch{}}
-  return near.KeyPair.fromString(secret);
+  const kp=near.KeyPair.fromString(secret);
+  return {accountId:hex(kp.getPublicKey().data),signer:new near.KeyPairSigner(kp)};
  }
  async function exists(id){try{await provider.viewAccount({accountId:id});return true;}catch{return false;}}
- async function fund(kp,id){
-  const timestamp=Date.now(),sig=kp.sign(new TextEncoder().encode(`lunearcy-fund:${id}:${timestamp}`));
-  const r=await fetch(`${SPONSOR}/fund`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({accountId:id,publicKey:kp.getPublicKey().toString(),signature:b64(sig.signature),timestamp})});
+ /** The sponsor tops up an account once its owner signs SHA-256(`lunearcy-fund:<account>:<time>`). */
+ async function fund(signer,id){
+  const timestamp=Date.now(),digest=await sha256(new TextEncoder().encode(`lunearcy-fund:${id}:${timestamp}`));
+  const signature=await signer.signBytes(digest),publicKey=(await signer.getPublicKey()).toString();
+  const r=await fetch(`${SPONSOR}/fund`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({accountId:id,publicKey,signature:b64(signature),timestamp})});
   if(!r.ok&&r.status!==429)throw Error((await r.json().catch(()=>({}))).error||`Sponsor ${r.status}`);
  }
  async function pull(prev){
@@ -69,9 +79,10 @@ export function connect({storageKey,onState,onStatus,onError}){
   async start(prev){
    status('connecting');
    near=await import('near-api-js');provider=new near.JsonRpcProvider({url:RPC});
-   const kp=await key(),id=hex(kp.getPublicKey().data);
-   if(!await exists(id)){await fund(kp,id);for(let i=0;i<20&&!await exists(id);i++)await wait(1000);}
-   account=new near.Account(id,provider,kp.toString());
+   const who=identity||guestKey(),id=who.accountId;
+   // Sign-in accounts are topped up whenever they run low; guests only on their first visit.
+   if(!await exists(id)||identity){try{await fund(who.signer,id);}catch(e){if(!await exists(id))throw e;}for(let i=0;i<20&&!await exists(id);i++)await wait(1000);}
+   account=new near.Account(id,provider,who.signer);
    let v=await view('get_player',{account_id:id});
    if(!v){status('joining');await account.callFunction({contractId:CONTRACT,methodName:'join',args:{},gas:30_000_000_000_000n});}
    // An RPC node can lag a block behind the one that ran `join`: ask again until the new valley shows up.
