@@ -12,7 +12,7 @@ globalThis.process??={env:{}};
 
 export const CONTRACT=import.meta.env.VITE_CONTRACT_ID||deployment.contractId;
 const RPC=import.meta.env.VITE_NEAR_RPC||'https://test.rpc.fastnear.com';
-const SPONSOR=import.meta.env.VITE_SPONSOR_URL||'http://127.0.0.1:8787';
+const SPONSOR=import.meta.env.VITE_SPONSOR_URL||(import.meta.env.DEV?'http://127.0.0.1:8787':'/api');
 export const explorer=id=>`https://testnet.nearblocks.io/address/${id}`;
 
 const METHOD={hatch:'hatch',hurry:'hurry',feed:'feed',collect:'collect',buyEgg:'buy_egg',upgrade:'upgrade',rename:'rename',moveDragon:'move_dragon',

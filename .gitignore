@@ -10,3 +10,5 @@ releases/
 *.log
 .env
 .env.*
+# macOS AppleDouble files on exFAT/external drives
+._*

@@ -8,7 +8,9 @@ An illustrated browser game about a dragon sanctuary, built at NEAR Hackathon (t
 
 Node 24+. `npm install`, then `npm run dev` → http://127.0.0.1:5180/.
 
-The game talks to the deployed testnet contract out of the box. To get gas sponsored locally, run the sponsor next to it (`npm --prefix server install`, then `node tools/near/relayer-local.mjs`, which reads its disposable testnet key from the git-ignored `.local/`). Without a sponsor, or with `?offline`, the same game runs locally in the browser.
+The game talks to the deployed testnet contract out of the box. To get gas sponsored locally, run the sponsor next to it (`node tools/near/relayer-local.mjs`, which reads its disposable testnet key from the git-ignored `.local/sponsor-testnet.json`; create one with `node tools/near/create-sponsor.mjs`). Without a sponsor, or with `?offline`, the same game runs locally in the browser.
+
+Deploy: Netlify builds the site from `netlify.toml` and serves the sponsor at `/api/fund`; set `SPONSOR_ACCOUNT_ID` and `SPONSOR_PRIVATE_KEY` in the site's environment variables.
 
 - `npm test`: 25 tests for the economy, Lucy's market, the week simulation, the English translation and contract parity.
 - Contract tests: `cargo test --manifest-path contracts/economy/Cargo.toml` (19 tests, including parity with the browser rules).
@@ -47,7 +49,7 @@ Pan by dragging; mouse wheel or pinch to zoom; keyboard arrows, +/− and Home. 
 - **NEP-245 multi token:** `coins`, `berries`, `crystals` and `dragon:<id>` (supply of one) in one contract, with `mt_balance_of`, `mt_batch_balance_of`, `mt_supply`, `mt_token`, `mt_transfer`, `mt_batch_transfer`, `mt_transfer_call` and standard `mt_mint` / `mt_burn` / `mt_transfer` events. Goods and coins move freely between players; dragons carry game state and move only through the game.
 - **Lucy, an NPC with a wallet:** her wallet is the contract's own `coins` balance and her shelves are its `berries` / `crystals` balances. She pays from that wallet, her price falls with every unit on her shelf, neighbours buy from her every 20 seconds, and when she is broke her shop is closed for everyone until someone spends coins in the valley. The eclipse is one shared clock: crystals pay 25% more while the sky is red.
 - **The whole economy is on chain:** eggs, feeding, levels, harvests (computed from block time, so a browser cannot mint goods), trips, lands, goals. The browser runs the same rules to answer instantly, sends each action as a transaction and then adopts the contract's state. `contracts/economy/src/rules.rs` mirrors `src/market-rules.js` and `src/engine.js` in exact integer arithmetic; `tools/parity-vectors.mjs` and `contracts/economy/tests/parity.rs` prove they agree.
-- **No wallet, no gas prompt:** the browser keeps a player key (implicit testnet account); `server/relayer.mjs` (deployed on Render, see `render.yaml`) tops that account up with test NEAR after the browser proves it holds the key, with per-IP, per-account and daily limits.
+- **No wallet, no gas prompt:** a guest's browser keeps a player key (an implicit testnet account); a signed-in player (email or Google via Privy) gets an embedded NEAR wallet that signs silently. The gas sponsor (`server/sponsor-core.mjs`, served as the Netlify function `netlify/functions/sponsor.mjs` on the game's own domain; `server/relayer.mjs` + `render.yaml` run the same code as a standalone server) tops the account up with test NEAR after the browser proves it holds the key, with per-IP, per-account and daily limits.
 
 This is testnet: tokens have no money value and nothing here is a financial product. The earlier dragon registry (`contracts/market`, a custom ownership/trade demo) is kept for reference.
 

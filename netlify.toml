@@ -1,0 +1,12 @@
+# Lunearcy on Netlify: the static game plus the gas sponsor function (netlify/functions/sponsor.mjs).
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "24"
+  # The browser calls the sponsor on the same domain.
+  VITE_SPONSOR_URL = "/api"
+
+[functions]
+  node_bundler = "esbuild"
