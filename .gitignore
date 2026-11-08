@@ -12,3 +12,4 @@ releases/
 .env.*
 # macOS AppleDouble files on exFAT/external drives
 ._*
+.netlify/
